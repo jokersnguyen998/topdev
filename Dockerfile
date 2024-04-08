@@ -1,6 +1,10 @@
 # Set master image
 FROM php:8.2-fpm
 
+# Arguments defined in docker-compose.yml
+ARG user
+ARG uid
+
 # Copy composer.lock and composer.json
 COPY composer.lock composer.json /var/www/html/
 
@@ -33,20 +37,19 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-install pdo pdo_mysql
 RUN docker-php-ext-enable pdo_mysql
 
-# Install PHP Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Get latest Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Remove Cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Add UID '1000' to www-data
-RUN usermod -u 1000 www-data
-
-# Copy existing application directory permissions
-COPY --chown=www-data:www-data . /var/www/html
+# Create system user to run Composer and Artisan Commands
+RUN useradd -G www-data,root -u $uid -d /home/$user $user
+RUN mkdir -p /home/$user/.composer && \
+    chown -R $user:$user /home/$user
 
 # Change current user to www
-USER www-data
+USER $user
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000

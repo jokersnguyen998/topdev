@@ -1,7 +1,10 @@
-version: '3'
+version: '3.7'
 services:
   app:
     build:
+      args:
+        user: ${APP_USER}
+        uid: ${APP_UUID}
       context: .
       dockerfile: Dockerfile
     image: jokersnguyen998-labs/topdev
