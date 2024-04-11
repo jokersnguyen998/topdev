@@ -11,22 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('companies', function (Blueprint $table) {
+        Schema::create('branches', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('company_id')->nullable();
             $table->unsignedBigInteger('ward_id')->nullable();
-            $table->string('number', 20);
             $table->string('name', 100);
-            $table->string('representative', 50)->nullable();
-            $table->string('detail_address', 255)->nullable();
             $table->string('phone_number', 20)->nullable();
-            $table->string('homepage_url', 255)->nullable();
-            $table->string('contact_person', 50);
-            $table->string('contact_email', 100)->unique();
-            $table->string('contact_phone_number', 20);
-            $table->timestamp('suspended_at')->nullable();
+            $table->string('detail_address', 255)->nullable();
             $table->timestamps();
             $table->softDeletes();
 
+            $table->foreign('company_id')
+                ->references('id')
+                ->on('companies')
+                ->cascadeOnDelete();
+                
             $table->foreign('ward_id')
                 ->references('id')
                 ->on('administrative_units')
@@ -39,6 +38,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('companies');
+        Schema::dropIfExists('branches');
     }
 };
