@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('detail_address', 255)->nullable();
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('branch_id')
                 ->references('id')

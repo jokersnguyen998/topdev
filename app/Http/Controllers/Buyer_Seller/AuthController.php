@@ -19,13 +19,16 @@ class AuthController extends Controller
      */
     public function register(Request $request): JsonResponse
     {
-        $validator = validator([
-            'name' => 'required|max:50',
-            'email' => 'required|email|unique:employees,email|max:100',
-            'password' => 'required|max:255',
-            'phone_number' => 'required|max:20',
-            'detail_address' => 'nullable|max:255',
-        ]);
+        $validator = validator(
+            $request->all(),
+            [
+                'name' => 'required|max:50',
+                'email' => 'required|email|unique:employees,email|max:100',
+                'password' => 'required|max:255',
+                'phone_number' => 'required|max:20',
+                'detail_address' => 'nullable|max:255',
+            ]
+        );
 
         if ($validator->fails()) {
             return response()->json([
@@ -57,10 +60,13 @@ class AuthController extends Controller
      */
     public function login(Request $request): JsonResponse
     {
-        $validator = validator([
-            'email' => 'required|email|unique:employees,email|max:100',
-            'password' => 'required|max:255',
-        ]);
+        $validator = validator(
+            $request->all(),
+            [
+                'email' => 'required|email|exists:employees,email|max:100',
+                'password' => 'required|max:255',
+            ]
+        );
 
         if ($validator->fails()) {
             return response()->json([

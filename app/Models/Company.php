@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Company extends Model
@@ -29,5 +31,35 @@ class Company extends Model
         return [
             'suspended_at' => 'datetime',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Company $company) {
+            $company->number = time();
+        });
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
+
+    public function branches(): HasMany
+    {
+        return $this->hasMany(Branch::class, 'company_id', 'id');
+    }
+
+    public function employees(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Employee::class,
+            Branch::class,
+            'company_id',
+            'branch_id',
+            'id',
+            'id'
+        );
     }
 }

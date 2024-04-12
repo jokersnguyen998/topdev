@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Buyer_Seller\AuthController;
+use App\Http\Controllers\LP\LandingPageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,4 +18,10 @@ Route::prefix('/seller')->middleware(['auth:sanctum'])->group(function () {
 Route::prefix('/buyer-seller')->middleware(['auth:sanctum'])->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->withoutMiddleware(['auth:sanctum']);
     Route::post('/login', [AuthController::class, 'login'])->withoutMiddleware(['auth:sanctum']);
+});
+
+Route::prefix('/lp')->group(function () {
+    Route::controller(LandingPageController::class)->group(function () {
+        Route::post('/using-applications', 'storeCompany');
+    });
 });
