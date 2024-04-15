@@ -26,6 +26,10 @@ class Company extends Model
         'suspended_at',
     ];
 
+    protected $appends = [
+        'hash_url'
+    ];
+
     public function casts(): array
     {
         return [
@@ -38,6 +42,16 @@ class Company extends Model
         static::creating(function (Company $company) {
             $company->number = time();
         });
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Accessors & Mutators
+    |--------------------------------------------------------------------------
+    */
+    public function getHashUrlAttribute(): string
+    {
+        return base64_encode($this->contact_email);
     }
 
     /*
