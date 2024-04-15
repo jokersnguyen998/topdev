@@ -3,13 +3,12 @@
 namespace Database\Factories;
 
 use App\Models\AdministrativeUnit;
-use App\Models\Branch;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Employee>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Worker>
  */
-class EmployeeFactory extends Factory
+class WorkerFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -19,18 +18,23 @@ class EmployeeFactory extends Factory
     public function definition(): array
     {
         $contactPerson = $this->faker->firstName . ' ' . $this->faker->lastName;
-        $branch = Branch::with('company')->inRandomOrder()->first();
         return [
-            'branch_id' => $branch->id,
-            'company_id' => $branch->company_id,
             'ward_id' => AdministrativeUnit::wards()->inRandomOrder()->first('id')->id,
+            'contact_ward_id' => AdministrativeUnit::wards()->inRandomOrder()->first('id')->id,
             'name' => $contactPerson,
             'email' => strtolower(str_replace(' ', '-', $contactPerson)) . substr(time(), -5) . '@mailinator.com',
             'password' => bcrypt('@Abcd12345'),
-            'phone_number' => $branch->company->contact_phone_number,
+            'phone_number' => $this->faker->numerify('0#########'),
             'gender' => rand(0, 1),
             'birthday' => $this->faker->dateTimeBetween('-30 years', '-18 years'),
             'detail_address' => $this->faker->streetAddress,
+            'avatar_url' => $this->faker->imageUrl,
+            'contact_detail_address' => $this->faker->streetAddress,
+            'contact_phone_number' => $this->faker->numerify('0#########'),
+            'terms_of_use_agreement_at' => now(),
+            'privacy_policy_agreement_at' => now(),
+            'withdrawn_at' => null,
+            'last_login_at' => null,
         ];
     }
 }

@@ -11,33 +11,33 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('employees', function (Blueprint $table) {
+        Schema::create('workers', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('branch_id');
-            $table->unsignedBigInteger('company_id');
             $table->unsignedBigInteger('ward_id')->nullable();
+            $table->unsignedBigInteger('contact_ward_id')->nullable();
             $table->string('name', 50);
             $table->string('email', 100)->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password', 255);
             $table->string('phone_number', 20);
             $table->boolean('gender')->nullable();
-            $table->date('birthday')->nullable();
+            $table->date('birthday');
             $table->string('detail_address', 255)->nullable();
+            $table->string('avatar_url', 255)->nullable();
+            $table->string('contact_detail_address', 255)->nullable();
+            $table->string('contact_phone_number', 20)->nullable();
+            $table->timestamp('terms_of_use_agreement_at')->nullable();
+            $table->timestamp('privacy_policy_agreement_at')->nullable();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->timestamp('withdrawn_at')->nullable();
+            $table->timestamp('last_login_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('branch_id')
-                ->references('id')
-                ->on('branches')
-                ->cascadeOnDelete();
-
-            $table->foreign('company_id')
-                ->references('id')
-                ->on('companies')
-                ->cascadeOnDelete();
-
             $table->foreign('ward_id')
+                ->references('id')
+                ->on('administrative_units')
+                ->nullOnDelete();
+            $table->foreign('contact_ward_id')
                 ->references('id')
                 ->on('administrative_units')
                 ->nullOnDelete();
@@ -49,6 +49,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('employees');
+        Schema::dropIfExists('workers');
     }
 };
