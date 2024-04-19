@@ -21,7 +21,7 @@ class BranchJobIntroductionLicenseFactory extends Factory
     public function definition(): array
     {
         return [
-            'branch_id' => $this->faker->unique()->randomElement(Branch::pluck('id')->toArray()),
+            'branch_id' => $this->faker->unique(true)->randomElement(Branch::pluck('id')->toArray()),
             'ward_id' => $this->wards()->inRandomOrder()->first('id')->id,
             'detail_address' => $this->faker->streetAddress,
             'license_url' => $this->faker->url,

@@ -2,7 +2,6 @@
 
 namespace App\Traits;
 
-use App\Enums\AdministrativeUnitType;
 use App\Models\AdministrativeUnit;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,7 +16,7 @@ trait HasAdministrativeUnit
     public function ward(): BelongsTo
     {
         return $this->belongsTo(AdministrativeUnit::class, 'ward_id', 'id')
-            ->where('type', '=', AdministrativeUnitType::wards());
+            ->wards();
     }
 
     /**
@@ -27,7 +26,7 @@ trait HasAdministrativeUnit
      */
     public function wards(): Builder
     {
-        return AdministrativeUnit::query()->whereIn('type', AdministrativeUnitType::wards());
+        return AdministrativeUnit::query()->wards();
     }
 }
 
