@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasAdministrativeUnit;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -10,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Employee extends Authenticatable
 {
-    use HasFactory, Notifiable, HasApiTokens, SoftDeletes;
+    use HasFactory, Notifiable, HasApiTokens, SoftDeletes, HasAdministrativeUnit;
 
     protected $fillable = [
         'branch_id',

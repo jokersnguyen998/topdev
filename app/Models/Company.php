@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\HasAdministrativeUnit;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Company extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasAdministrativeUnit;
 
     protected $fillable = [
         'ward_id',
@@ -27,7 +29,7 @@ class Company extends Model
     ];
 
     protected $appends = [
-        'hash_url'
+        'hash_url',
     ];
 
     public function casts(): array
@@ -40,7 +42,7 @@ class Company extends Model
     protected static function booted(): void
     {
         static::creating(function (Company $company) {
-            $company->number = time();
+            $company->number = \Str::random(20);
         });
     }
 
@@ -49,6 +51,7 @@ class Company extends Model
     | Accessors & Mutators
     |--------------------------------------------------------------------------
     */
+
     public function getHashUrlAttribute(): string
     {
         return base64_encode($this->contact_email);
@@ -59,6 +62,11 @@ class Company extends Model
     | Relationships
     |--------------------------------------------------------------------------
     */
+
+    public function companyJobIntroductionLicense(): HasOne
+    {
+        return $this->hasOne(CompanyJobIntroductionLicense::class, 'company_id', 'id');
+    }
 
     public function branches(): HasMany
     {

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Traits\HasAdministrativeUnit;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -10,7 +12,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Worker extends Authenticatable
 {
-    use HasFactory, Notifiable, HasApiTokens, SoftDeletes;
+    use HasFactory, Notifiable, HasApiTokens, SoftDeletes, HasAdministrativeUnit;
 
     protected $fillable = [
         'ward_id',
@@ -42,5 +44,33 @@ class Worker extends Authenticatable
             'password' => 'hashed',
             'gender' => 'boolean',
         ];
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Scopes
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Doesn't withdrawn from the system
+     *
+     * @param  Builder $builder
+     * @return Builder
+     */
+    public function scopeDoesntWithdrawn(Builder $builder): Builder
+    {
+        return $builder->whereNull('withdrawn_at');
+    }
+
+    /**
+     * Withdrawn from the system
+     *
+     * @param  Builder $builder
+     * @return Builder
+     */
+    public function scopeWithdrawn(Builder $builder): Builder
+    {
+        return $builder->whereNull('withdrawn_at');
     }
 }

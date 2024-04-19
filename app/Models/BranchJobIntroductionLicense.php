@@ -2,24 +2,21 @@
 
 namespace App\Models;
 
-use App\Enums\AdministrativeUnitType;
 use App\Traits\HasAdministrativeUnit;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Branch extends Model
+class BranchJobIntroductionLicense extends Model
 {
-    use HasFactory, SoftDeletes, HasAdministrativeUnit;
+    use HasFactory, HasAdministrativeUnit;
 
     protected $fillable = [
-        'company_id',
+        'branch_id',
         'ward_id',
-        'name',
-        'phone_number',
         'detail_address',
+        'license_url',
+        'detail_url',
     ];
 
     /*
@@ -27,13 +24,9 @@ class Branch extends Model
     | Relationships
     |--------------------------------------------------------------------------
     */
-    public function company(): BelongsTo
-    {
-        return $this->belongsTo(Company::class, 'company_id', 'id');
-    }
 
-    public function employees(): HasMany
+    public function branch(): BelongsTo
     {
-        return $this->hasMany(Employee::class, 'branch_id', 'id');
+        return $this->belongsTo(Branch::class, 'branch_id', 'id');
     }
 }

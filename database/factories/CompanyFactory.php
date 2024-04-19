@@ -2,8 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Enums\AdministrativeUnitType;
-use App\Models\AdministrativeUnit;
+use App\Traits\HasAdministrativeUnit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -11,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class CompanyFactory extends Factory
 {
+    use HasAdministrativeUnit;
+
     /**
      * Define the model's default state.
      *
@@ -20,7 +21,7 @@ class CompanyFactory extends Factory
     {
         $contactPerson = $this->faker->firstName . ' ' . $this->faker->lastName;
         return [
-            'ward_id' => AdministrativeUnit::whereIn('type', AdministrativeUnitType::wards())->inRandomOrder()->first('id')->id,
+            'ward_id' => $this->wards()->inRandomOrder()->first('id')->id,
             'number' => $this->faker->numerify('####-####-####-####'),
             'name' => $this->faker->company . ' ' . $this->faker->companySuffix,
             'representative' => $this->faker->firstName . ' ' . $this->faker->lastName,

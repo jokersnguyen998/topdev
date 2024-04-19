@@ -20,6 +20,12 @@ class AdministrativeUnit extends Model
     |--------------------------------------------------------------------------
     */
 
+    /**
+     * The administrative unit is the commune, ward, town
+     *
+     * @param  Builder $builder
+     * @return Builder
+     */
     public function scopeWards(Builder $builder): Builder
     {
         return $builder->whereIn('type', AdministrativeUnitType::wards());
@@ -30,7 +36,6 @@ class AdministrativeUnit extends Model
     | Relationships
     |--------------------------------------------------------------------------
     */
-
     public function district(): BelongsTo
     {
         return $this->belongsTo(AdministrativeUnit::class, 'parent_id', 'id')

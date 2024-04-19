@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\AdministrativeUnit;
+use App\Traits\HasAdministrativeUnit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class WorkerFactory extends Factory
 {
+    use HasAdministrativeUnit;
+
     /**
      * Define the model's default state.
      *
@@ -19,7 +22,7 @@ class WorkerFactory extends Factory
     {
         $contactPerson = $this->faker->firstName . ' ' . $this->faker->lastName;
         return [
-            'ward_id' => AdministrativeUnit::wards()->inRandomOrder()->first('id')->id,
+            'ward_id' => $this->wards()->inRandomOrder()->first('id')->id,
             'contact_ward_id' => AdministrativeUnit::wards()->inRandomOrder()->first('id')->id,
             'name' => $contactPerson,
             'email' => strtolower(str_replace(' ', '-', $contactPerson)) . substr(time(), -5) . '@mailinator.com',

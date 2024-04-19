@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\AdministrativeUnit;
 use App\Models\Branch;
+use App\Traits\HasAdministrativeUnit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class EmployeeFactory extends Factory
 {
+    use HasAdministrativeUnit;
+
     /**
      * Define the model's default state.
      *
@@ -23,7 +25,7 @@ class EmployeeFactory extends Factory
         return [
             'branch_id' => $branch->id,
             'company_id' => $branch->company_id,
-            'ward_id' => AdministrativeUnit::wards()->inRandomOrder()->first('id')->id,
+            'ward_id' => $this->wards()->inRandomOrder()->first('id')->id,
             'name' => $contactPerson,
             'email' => strtolower(str_replace(' ', '-', $contactPerson)) . substr(time(), -5) . '@mailinator.com',
             'password' => bcrypt('@Abcd12345'),

@@ -2,9 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Enums\AdministrativeUnitType;
-use App\Models\AdministrativeUnit;
 use App\Models\Company;
+use App\Traits\HasAdministrativeUnit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -12,6 +11,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class BranchFactory extends Factory
 {
+    use HasAdministrativeUnit;
+
     /**
      * Define the model's default state.
      *
@@ -21,7 +22,7 @@ class BranchFactory extends Factory
     {
         return [
             'company_id' => Company::inRandomOrder()->first('id')->id,
-            'ward_id' => AdministrativeUnit::whereIn('type', AdministrativeUnitType::wards())->inRandomOrder()->first('id')->id,
+            'ward_id' => $this->wards()->inRandomOrder()->first('id')->id,
             'name' => $this->faker->company . ' ' . $this->faker->companySuffix,
             'phone_number' => $this->faker->numerify('0#########'),
             'detail_address' => null,
