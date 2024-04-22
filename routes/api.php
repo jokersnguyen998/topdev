@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\Buyer_Seller\AuthController as BuyerSellerAuthController;
-use App\Http\Controllers\Buyer_Seller\CompanyController as BuyerSellerCompanyController;
+use App\Http\Controllers\Buyer\RecruitmentController as BuyerRecruitmentController;
 use App\Http\Controllers\Seller\CompanyJobIntroductionLicenseController as SellerCompanyJobIntroductionLicenseController;
 use App\Http\Controllers\Seller\BranchJobIntroductionLicenseController as SellerBranchJobIntroductionLicenseController;
+use App\Http\Controllers\Buyer_Seller\AuthController as BuyerSellerAuthController;
+use App\Http\Controllers\Buyer_Seller\CompanyController as BuyerSellerCompanyController;
 use App\Http\Controllers\Buyer_Seller\BranchController as BuyerSellerBranchController;
 use App\Http\Controllers\Worker\AuthController as WorkerAuthController;
 use App\Http\Controllers\LP\LandingPageController;
@@ -15,7 +16,14 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::prefix('/buyer')->as('buyer.')->middleware(['auth:sanctum'])->group(function () {
-    
+    Route::prefix('/recruitments')->as('recruitments.')->group(function () {
+        Route::controller(BuyerRecruitmentController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{recruitment_id}', 'show')->name('show')->whereNumber('recruitment_id');
+            Route::put('/{recruitment_id}', 'update')->name('update')->whereNumber('recruitment_id');
+        });
+    });
 });
 
 Route::prefix('/seller')->as('seller.')->middleware(['auth:sanctum', 'can:valid-license'])->group(function () {

@@ -25,6 +25,16 @@ class Recruitment extends Model
         'salary',
         'monthly_salary',
         'yearly_salary',
+        'has_referral_fee',
+        'referral_fee_type',
+        'referral_fee_note',
+        'referral_fee_by_value',
+        'referral_fee_percent',
+        'referral_fee_by_percent',
+        'has_refund',
+        'refund_note',
+        'contact_email',
+        'contact_phone_number',
         'holiday',
         'welfare',
         'employment_type',
@@ -43,6 +53,8 @@ class Recruitment extends Model
     {
         return [
             'is_published' => 'boolean',
+            'has_referral_fee' => 'boolean',
+            'has_refund' => 'boolean',
             'publish_start_date' => 'date:Y-m-d',
             'publish_end_date' => 'date:Y-m-d',
         ];
