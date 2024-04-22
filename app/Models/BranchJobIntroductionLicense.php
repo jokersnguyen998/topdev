@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Traits\HasAdministrativeUnit;
+use App\Traits\HasService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BranchJobIntroductionLicense extends Model
 {
-    use HasFactory, HasAdministrativeUnit;
+    use HasFactory, HasAdministrativeUnit, HasService;
 
     protected $fillable = [
         'branch_id',

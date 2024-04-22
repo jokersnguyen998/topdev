@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Branch extends Model
@@ -26,6 +27,12 @@ class Branch extends Model
     | Relationships
     |--------------------------------------------------------------------------
     */
+
+    public function branchJobIntroductionLicense(): HasOne
+    {
+        return $this->hasOne(BranchJobIntroductionLicense::class, 'branch_id', 'id');
+    }
+
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class, 'company_id', 'id');

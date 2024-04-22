@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Traits\HasAdministrativeUnit;
+use App\Traits\HasService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CompanyJobIntroductionLicense extends Model
 {
-    use HasFactory, HasAdministrativeUnit;
+    use HasFactory, HasAdministrativeUnit, HasService;
 
     protected $fillable = [
         'company_id',
@@ -32,6 +33,8 @@ class CompanyJobIntroductionLicense extends Model
     public function casts(): array
     {
         return [
+            'issue_date' => 'date:Y-m-d',
+            'expired_date' => 'date:Y-m-d',
             'is_excellent_referral' => 'boolean',
         ];
     }
@@ -44,7 +47,7 @@ class CompanyJobIntroductionLicense extends Model
 
     public function getLicenseNumberAttribute(): string
     {
-        return "{$this->license_number_1} - {$this->license_number_2} - {$this->license_number_3}";
+        return "{$this->license_number_1}-{$this->license_number_2}-{$this->license_number_3}";
     }
 
     /*

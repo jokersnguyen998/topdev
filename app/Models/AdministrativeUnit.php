@@ -31,6 +31,17 @@ class AdministrativeUnit extends Model
         return $builder->whereIn('type', AdministrativeUnitType::wards());
     }
 
+    /**
+     * The administrative unit is the province and city
+     *
+     * @param  Builder $builder
+     * @return Builder
+     */
+    public function scopeProvinces(Builder $builder): Builder
+    {
+        return $builder->whereIn('type', AdministrativeUnitType::provinces());
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Relationships
