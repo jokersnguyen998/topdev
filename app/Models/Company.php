@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasAdministrativeUnit;
+use App\Traits\HasNumber;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Company extends Model
 {
-    use HasFactory, SoftDeletes, HasAdministrativeUnit;
+    use HasFactory, SoftDeletes, HasAdministrativeUnit, HasNumber;
 
     protected $fillable = [
         'ward_id',
@@ -32,18 +33,18 @@ class Company extends Model
         'hash_url',
     ];
 
+    /**
+     * Set number field length
+     *
+     * @var int
+     */
+    protected $numberLength = 20;
+
     public function casts(): array
     {
         return [
             'suspended_at' => 'datetime',
         ];
-    }
-
-    protected static function booted(): void
-    {
-        static::creating(function (Company $company) {
-            $company->number = \Str::random(20);
-        });
     }
 
     /*

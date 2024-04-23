@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
 
 class Employee extends Authenticatable
@@ -31,6 +32,10 @@ class Employee extends Authenticatable
         'password',
     ];
 
+    protected $appends = [
+        'age',
+    ];
+
     protected function casts(): array
     {
         return [
@@ -42,10 +47,25 @@ class Employee extends Authenticatable
 
     /*
     |--------------------------------------------------------------------------
+    | Accessors & Mutators
+    |--------------------------------------------------------------------------
+    */
+    public function getGenderAttribute($value)
+    {
+        return $value ? 'Male' : 'Female';
+    }
+
+    public function getAgeAttribute()
+    {
+        return Carbon::parse($this->birthday)->age;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
     | Relationships
     |--------------------------------------------------------------------------
     */
-
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class, 'company_id', 'id');

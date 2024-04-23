@@ -16,7 +16,7 @@ class StoreRecruitmentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -52,6 +52,7 @@ class StoreRecruitmentRequest extends FormRequest
                 'nullable',
                 Rule::enum(ReferralFeeType::class),
                 Rule::requiredIf($this->has_referral_fee),
+                Rule::prohibitedIf(!$this->has_referral_fee),
             ],
             'referral_fee_note' => [
                 'nullable',
@@ -62,11 +63,13 @@ class StoreRecruitmentRequest extends FormRequest
                 'nullable',
                 'digits_between:7,10',
                 Rule::requiredIf($this->referral_fee_type === ReferralFeeType::MONEY->value),
+                Rule::prohibitedIf($this->referral_fee_type !== ReferralFeeType::MONEY->value),
             ],
             'referral_fee_percent' => [
                 'nullable',
                 'digits_between:1,100',
                 Rule::requiredIf($this->referral_fee_type === ReferralFeeType::PERCENT->value),
+                Rule::prohibitedIf($this->referral_fee_type !== ReferralFeeType::PERCENT->value),
             ],
             'has_refund' => 'required|boolean',
             'refund_note' => [
@@ -74,7 +77,7 @@ class StoreRecruitmentRequest extends FormRequest
                 'max:800',
                 Rule::requiredIf($this->has_refund),
             ],
-            'contact_email' => 'nullable|max:100',
+            'contact_email' => 'nullable|email|max:100',
             'contact_phone_number' => 'nullable|digits_between:10,12',
             'holiday' => 'nullable|max:800',
             'welfare' => 'nullable|max:800',
@@ -87,10 +90,10 @@ class StoreRecruitmentRequest extends FormRequest
                 'required',
                 Rule::enum(LaborContractType::class),
             ],
-            'video_url' => 'nullable|max:255',
-            'image_1_url' => 'nullable|max:255',
-            'image_2_url' => 'nullable|max:255',
-            'image_3_url' => 'nullable|max:255',
+            'video_url' => 'nullable|url|max:255',
+            'image_1_url' => 'nullable|url|max:255',
+            'image_2_url' => 'nullable|url|max:255',
+            'image_3_url' => 'nullable|url|max:255',
             'image_1_caption' => 'nullable|max:100',
             'image_2_caption' => 'nullable|max:100',
             'image_3_caption' => 'nullable|max:100',

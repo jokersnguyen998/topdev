@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasNumber;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Recruitment extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasNumber;
 
     protected $fillable = [
         'contact_branch_id',
@@ -48,6 +49,13 @@ class Recruitment extends Model
         'image_2_caption',
         'image_3_caption',
     ];
+
+    /**
+     * Set number field length
+     *
+     * @var int
+     */
+    protected $numberLength = 50;
 
     protected function casts(): array
     {
