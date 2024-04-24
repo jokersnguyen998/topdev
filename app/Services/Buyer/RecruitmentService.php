@@ -52,16 +52,14 @@ class RecruitmentService
      *
      * @throws NotFoundHttpException
      */
-    public function show(Request $request, int $id): Recruitment
+    public function show(Request $request, int $id): RecruitmentResource
     {
-        $request->validate([
-            'recruitment_id' => [
-                'required',
-                Rule::exists('recruitments', 'id')
-                    ->whereIn('contact_branch_id', $request->user()->company->branches->pluck('id')->toArray()),
-            ]
-        ]);
-        return Recruitment::query()->findOrFail($id);
+        return new RecruitmentResource(
+            Recruitment::query()
+                ->whereIn('contact_branch_id', $request->user()->company->branches->pluck('id')->toArray())
+                ->with(['branch.ward.district.province', 'employee.ward.district.province'])
+                ->findOrFail($id)
+        );
     }
 
     /**
@@ -75,6 +73,9 @@ class RecruitmentService
      */
     public function update(UpdateRecruitmentRequest $request, int $id): void
     {
-        Recruitment::query()->findOrFail($id)->update($request->validated());
+        Recruitment::query()
+            ->whereIn('contact_branch_id', $request->user()->company->branches->pluck('id')->toArray())
+            ->whereKey($id)
+            ->update($request->validated());
     }
 }
