@@ -39,6 +39,11 @@ class UpdateRecruitmentRequest extends FormRequest
                 'required',
                 Rule::exists('employees', 'id')->where('company_id', $this->user()->company_id),
             ],
+            'is_published' => [
+                'required',
+                'boolean',
+                'published_with_all:publish_start_date,publish_end_date',
+            ],
             'publish_start_date' => 'required|date_format:Y-m-d',
             'publish_end_date' => 'required|date_format:Y-m-d|after:publish_start_date',
             'title' => 'required|max:100',
@@ -109,5 +114,23 @@ class UpdateRecruitmentRequest extends FormRequest
     public function prepareForValidation(): void
     {
         $this->merge(['recruitment_id' => $this->route('recruitment_id')]);
+    }
+
+    /**
+     * Get the validated data from the request.
+     *
+     * @param  mixed $key
+     * @param  mixed $default
+     * @return mixed
+     */
+    public function validated($key = null, $default = null)
+    {
+        $validated = data_get(parent::validated(), $key, $default);
+        
+        if (is_array($validated)) {
+            unset($validated['recruitment_id']);
+        }
+        
+        return $validated;
     }
 }

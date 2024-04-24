@@ -6,6 +6,7 @@ use App\Enums\EmploymentType;
 use App\Enums\LaborContractType;
 use App\Enums\ReferralFeeType;
 use App\Enums\SalaryType;
+use App\Rules\PublishRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -34,6 +35,11 @@ class StoreRecruitmentRequest extends FormRequest
             'contact_employee_id' => [
                 'required',
                 Rule::exists('employees', 'id')->where('company_id', $this->user()->company_id),
+            ],
+            'is_published' => [
+                'required',
+                'boolean',
+                'published_with_all:publish_start_date,publish_end_date',
             ],
             'publish_start_date' => 'required|date_format:Y-m-d',
             'publish_end_date' => 'required|date_format:Y-m-d|after:publish_start_date',

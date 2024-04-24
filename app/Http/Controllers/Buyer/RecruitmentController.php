@@ -39,6 +39,7 @@ class RecruitmentController extends Controller
      */
     public function store(StoreRecruitmentRequest $request): JsonResponse
     {
+        dd($request->validated());
         $recruitment = $this->recruitmentService->store($request);
         return response()->json($recruitment, Response::HTTP_CREATED);
     }

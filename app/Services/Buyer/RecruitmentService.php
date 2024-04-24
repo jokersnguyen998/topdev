@@ -8,7 +8,6 @@ use App\Http\Resources\Buyer\RecruitmentResource;
 use App\Models\Recruitment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Validation\Rule;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class RecruitmentService
