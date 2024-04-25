@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('branch_id');
+            $table->unsignedBigInteger('branch_id')->nullable();
             $table->unsignedBigInteger('company_id');
             $table->unsignedBigInteger('ward_id')->nullable();
             $table->string('name', 50);
@@ -21,8 +21,8 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password', 255);
             $table->string('phone_number', 20);
-            $table->boolean('gender')->nullable();
-            $table->date('birthday')->nullable();
+            $table->boolean('gender');
+            $table->date('birthday');
             $table->string('detail_address', 255)->nullable();
             $table->timestamps();
             $table->softDeletes();

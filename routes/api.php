@@ -6,6 +6,7 @@ use App\Http\Controllers\Seller\BranchJobIntroductionLicenseController as Seller
 use App\Http\Controllers\Buyer_Seller\AuthController as BuyerSellerAuthController;
 use App\Http\Controllers\Buyer_Seller\CompanyController as BuyerSellerCompanyController;
 use App\Http\Controllers\Buyer_Seller\BranchController as BuyerSellerBranchController;
+use App\Http\Controllers\Buyer_Seller\EmployeeController as BuyerSellerEmployeeController;
 use App\Http\Controllers\Worker\AuthController as WorkerAuthController;
 use App\Http\Controllers\LP\LandingPageController;
 use Illuminate\Http\Request;
@@ -28,7 +29,7 @@ Route::prefix('/buyer')->as('buyer.')->middleware(['auth:sanctum'])->group(funct
             Route::put('/me', 'update')->name('update');
         });
     });
-    
+
     Route::prefix('/branches')->as('branch.')->group(function () {
         Route::controller(BuyerSellerBranchController::class)->group(function () {
             Route::get('/', 'index')->name('index');
@@ -36,7 +37,17 @@ Route::prefix('/buyer')->as('buyer.')->middleware(['auth:sanctum'])->group(funct
             Route::put('/{branch_id}', 'update')->name('update')->whereNumber('branch_id');
         });
     });
-    
+
+    Route::prefix('/employees')->as('employee.')->group(function () {
+        Route::controller(BuyerSellerEmployeeController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{employee_id}', 'show')->name('show')->whereNumber('employee_id');
+            Route::put('/{employee_id}', 'update')->name('update')->whereNumber('employee_id');
+            Route::delete('/{employee_id}', 'delete')->name('delete')->whereNumber('employee_id');
+        });
+    });
+
     Route::prefix('/recruitments')->as('recruitments.')->group(function () {
         Route::controller(BuyerRecruitmentController::class)->group(function () {
             Route::get('/', 'index')->name('index');
@@ -60,9 +71,9 @@ Route::prefix('/seller')->as('seller.')->middleware(['auth:sanctum', 'can:valid-
             Route::get('/me', 'show')->name('show');
             Route::put('/me', 'update')->name('update');
         });
-        
-        Route::controller(SellerCompanyJobIntroductionLicenseController::class)->group(function () {
-            Route::put('/job-introduction-license', 'update')->name('job-introduction-license.update')->withoutMiddleware(['can:valid-license']);
+
+        Route::controller(SellerCompanyJobIntroductionLicenseController::class)->withoutMiddleware(['can:valid-license'])->group(function () {
+            Route::put('/job-introduction-license', 'update')->name('job-introduction-license.update');
         });
     });
 
@@ -72,9 +83,19 @@ Route::prefix('/seller')->as('seller.')->middleware(['auth:sanctum', 'can:valid-
             Route::get('/{branch_id}', 'show')->name('show')->whereNumber('branch_id');
             Route::put('/{branch_id}', 'update')->name('update')->whereNumber('branch_id');
         });
-        
+
         Route::controller(SellerBranchJobIntroductionLicenseController::class)->group(function () {
             Route::put('/{branch_id}/job-introduction-license', 'update')->name('job-introduction-license.update')->whereNumber('branch_id');
+        });
+    });
+
+    Route::prefix('/employees')->as('employee.')->group(function () {
+        Route::controller(BuyerSellerEmployeeController::class)->withoutMiddleware(['can:valid-license'])->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{employee_id}', 'show')->name('show')->whereNumber('employee_id');
+            Route::put('/{employee_id}', 'update')->name('update')->whereNumber('employee_id');
+            Route::delete('/{employee_id}', 'delete')->name('delete')->whereNumber('employee_id');
         });
     });
 });
