@@ -20,6 +20,6 @@ class ValidationServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Validator::extend('published_with_all', 'App\Rules\PublishedWithAllRule@passes', ':custom_message');
+        Validator::extend('published_with_all', 'App\Rules\PublishedWithAllRule@passes', ':message');
     }
 }

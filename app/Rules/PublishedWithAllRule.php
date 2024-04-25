@@ -2,22 +2,58 @@
 
 namespace App\Rules;
 
+use Illuminate\Support\Carbon;
+use Illuminate\Validation\Validator;
+
 class PublishedWithAllRule
 {
-    public function passes($attribute, $value, $parameters, $validator): bool
+    /**
+     * Validate input data
+     *
+     * @param  string    $attribute
+     * @param  mixed     $value
+     * @param  array     $parameters
+     * @param  Validator $validator
+     * @return bool
+     */
+    public function passes(string $attribute, mixed $value, array $parameters, Validator $validator): bool
     {
-        if (count($parameters) < 2) {
-            throw new \InvalidArgumentException("Validation rule published_with_all requires 2 parameters.");
-        }
-        $now = now()->format('Y-m-d');
-        $publishStartDate = data_get($validator->getData(), $parameters[0], null);
-        $publishEndDate = data_get($validator->getData(), $parameters[1], null);
+        if (!$value) return true;
 
-        $validator->addReplacer('published_with_all', 
-            function($message, $attribute, $rule, $parameters) {
-                return \str_replace(':custom_message', 'Invalid publication date.', $message);
+        $this->sureValidArgument($parameters);
+
+        $startDate = Carbon::parse(data_get($validator->getData(), $parameters[0]))
+            ->setTime(0, 0, 0, 0);
+        $endDate = Carbon::parse(data_get($validator->getData(), $parameters[1]))
+            ->setTime(0, 0, 0, 0);
+
+        $validator->addReplacer(
+            'published_with_all',
+            function ($message, $attribute, $rule, $parameters) {
+                return str_replace(
+                    ':message',
+                    "The start and end dates of the recruitment are invalid.",
+                    $message
+                );
             }
         );
-        return $publishStartDate <= $now && $now <= $publishEndDate;
+
+        return $startDate->lte(today()) && $endDate->gte(today());
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param  array $parameters
+     * @return void
+     *
+     * @throws \InvalidArgumentException
+
+     */
+    private function sureValidArgument(array $parameters): void
+    {
+        if (!isset($parameters[1])) {
+            throw new \InvalidArgumentException("Validation rule published_with_all requires the start date and end date to be passed.");
+        }
     }
 }

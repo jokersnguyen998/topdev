@@ -6,7 +6,6 @@ use App\Enums\EmploymentType;
 use App\Enums\LaborContractType;
 use App\Enums\ReferralFeeType;
 use App\Enums\SalaryType;
-use App\Rules\PublishRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
