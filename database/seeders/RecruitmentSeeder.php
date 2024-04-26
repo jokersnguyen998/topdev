@@ -2,17 +2,34 @@
 
 namespace Database\Seeders;
 
+use App\Models\Occupation;
 use App\Models\Recruitment;
+use App\Traits\HasAdministrativeUnit;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class RecruitmentSeeder extends Seeder
 {
+    use HasAdministrativeUnit;
+
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Recruitment::factory(100)->create();
+        $occupations = Occupation::all('id');
+        $areas = $this->wards()->get('id');
+        Recruitment::factory(100)
+            ->create()
+            ->each(function ($item) use ($occupations, $areas) {
+                $item->occupations()->attach($occupations->random(rand(1, 5)));
+                foreach ($areas->random(rand(1, 5)) as $area) {
+                    $item->workingLocations()->attach($area, [
+                        'detail_address' => fake()->streetAddress,
+                        'map_url' => fake()->url,
+                        'note' => fake()->paragraph(1),
+                    ]);
+                }
+            });
     }
 }

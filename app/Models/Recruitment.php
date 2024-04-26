@@ -6,12 +6,18 @@ use App\Traits\HasNumber;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Recruitment extends Model
 {
     use HasFactory, SoftDeletes, HasNumber;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'contact_branch_id',
         'contact_employee_id',
@@ -57,6 +63,11 @@ class Recruitment extends Model
      */
     protected $numberLength = 50;
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
     protected function casts(): array
     {
         return [
@@ -81,5 +92,29 @@ class Recruitment extends Model
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class, 'contact_employee_id', 'id');
+    }
+
+    public function occupations(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Occupation::class,
+            'recruitment_occupations',
+            'recruitment_id',
+            'occupation_id',
+            'id',
+            'id',
+        );
+    }
+
+    public function workingLocations(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            AdministrativeUnit::class,
+            'working_locations',
+            'recruitment_id',
+            'ward_id',
+            'id',
+            'id',
+        )->withPivot(['detail_address', 'map_url', 'note']);
     }
 }
