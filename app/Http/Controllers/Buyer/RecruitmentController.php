@@ -65,7 +65,7 @@ class RecruitmentController extends Controller
      */
     public function update(UpdateRecruitmentRequest $request, int $id): JsonResponse
     {
-        $this->recruitmentService->update($request, $id);
-        return response()->json()->setStatusCode(Response::HTTP_NO_CONTENT);
+        $recruitment = $this->recruitmentService->update($request, $id);
+        return response()->json($recruitment, Response::HTTP_OK);
     }
 }

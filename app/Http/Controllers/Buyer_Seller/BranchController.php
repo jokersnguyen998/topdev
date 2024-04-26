@@ -52,7 +52,7 @@ class BranchController extends Controller
      */
     public function update(UpdateBranchRequest $request, int $id): JsonResponse
     {
-        $this->branchService->update($request, $id);
-        return response()->json()->setStatusCode(Response::HTTP_NO_CONTENT);
+        $branch = $this->branchService->update($request, $id);
+        return response()->json($branch, Response::HTTP_OK);
     }
 }

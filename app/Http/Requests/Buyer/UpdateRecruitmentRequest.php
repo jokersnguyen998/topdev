@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Buyer;
 
+use App\Enums\AdministrativeUnitType;
 use App\Enums\EmploymentType;
 use App\Enums\LaborContractType;
 use App\Enums\ReferralFeeType;
@@ -46,6 +47,12 @@ class UpdateRecruitmentRequest extends FormRequest
             ],
             'publish_start_date' => 'required|date_format:Y-m-d',
             'publish_end_date' => 'required|date_format:Y-m-d|after:publish_start_date',
+            'number' => [
+                'required',
+                'max:50',
+                Rule::unique('recruitments', 'number')
+                    ->where('company_id', $this->user()->company_id)
+            ],
             'title' => 'required|max:100',
             'sub_title' => 'required|max:100',
             'content' => 'required|max:800',
@@ -103,6 +110,18 @@ class UpdateRecruitmentRequest extends FormRequest
             'image_1_caption' => 'nullable|max:100',
             'image_2_caption' => 'nullable|max:100',
             'image_3_caption' => 'nullable|max:100',
+
+            'recruitment_occupations.*' => 'nullable|exists:occupations,id',
+
+            'working_locations.*' => 'nullable|array',
+            'working_locations.*.ward_id' => [
+                'required',
+                Rule::exists('administrative_units', 'id')
+                    ->whereIn('type', AdministrativeUnitType::wards()),
+            ],
+            'working_locations.*.detail_address' => 'required|max:255',
+            'working_locations.*.map_url' => 'nullable|max:255',
+            'working_locations.*.note' => 'nullable|max:500',
         ];
     }
 
@@ -114,23 +133,5 @@ class UpdateRecruitmentRequest extends FormRequest
     public function prepareForValidation(): void
     {
         $this->merge(['recruitment_id' => $this->route('recruitment_id')]);
-    }
-
-    /**
-     * Get the validated data from the request.
-     *
-     * @param  mixed $key
-     * @param  mixed $default
-     * @return mixed
-     */
-    public function validated($key = null, $default = null)
-    {
-        $validated = data_get(parent::validated(), $key, $default);
-        
-        if (is_array($validated)) {
-            unset($validated['recruitment_id']);
-        }
-        
-        return $validated;
     }
 }

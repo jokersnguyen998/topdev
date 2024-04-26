@@ -9,7 +9,9 @@ trait HasNumber
     {
         parent::boot();
         static::creating(function ($model) {
-            $model->number = Str::random($model->numberLength ?? 20);
+            if (is_null($model->number)) {
+                $model->number = Str::random($model->numberLength ?? 20);
+            }
         });
     }
 }

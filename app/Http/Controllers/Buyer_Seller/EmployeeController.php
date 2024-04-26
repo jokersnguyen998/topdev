@@ -65,8 +65,8 @@ class EmployeeController extends Controller
      */
     public function update(UpdateEmployeeRequest $request, int $id): JsonResponse
     {
-        $this->employeeService->update($request, $id);
-        return response()->json()->setStatusCode(Response::HTTP_OK);
+        $employee = $this->employeeService->update($request, $id);
+        return response()->json($employee, Response::HTTP_OK);
     }
 
     /**

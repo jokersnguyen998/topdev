@@ -43,6 +43,12 @@ class StoreRecruitmentRequest extends FormRequest
             ],
             'publish_start_date' => 'required|date_format:Y-m-d',
             'publish_end_date' => 'required|date_format:Y-m-d|after:publish_start_date',
+            'number' => [
+                'required',
+                'max:50',
+                Rule::unique('recruitments', 'number')
+                    ->where('company_id', $this->user()->company_id)
+            ],
             'title' => 'required|max:100',
             'sub_title' => 'required|max:100',
             'content' => 'required|max:800',

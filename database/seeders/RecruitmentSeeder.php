@@ -7,6 +7,7 @@ use App\Models\Recruitment;
 use App\Traits\HasAdministrativeUnit;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class RecruitmentSeeder extends Seeder
 {
@@ -30,6 +31,12 @@ class RecruitmentSeeder extends Seeder
                         'note' => fake()->paragraph(1),
                     ]);
                 }
+
+                DB::table('latest_recruitments')->insert([
+                    'recruitment_id' => $item->id,
+                    'company_id' => $item->company_id,
+                    'number' => $item->number,
+                ]);
             });
     }
 }

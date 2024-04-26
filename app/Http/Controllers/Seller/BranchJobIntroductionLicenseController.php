@@ -27,6 +27,6 @@ class BranchJobIntroductionLicenseController extends Controller
     public function update(UpdateBranchJobIntroductionLicenseRequest $request, int $id): JsonResponse
     {
         $this->branchJobIntroductionLicenseService->update($request, $id);
-        return response()->json()->setStatusCode(Response::HTTP_NO_CONTENT);
+        return response()->json()->setStatusCode(Response::HTTP_OK);
     }
 }

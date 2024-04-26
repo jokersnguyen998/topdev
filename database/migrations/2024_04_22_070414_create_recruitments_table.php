@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('recruitments', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('company_id');
             $table->unsignedBigInteger('contact_branch_id');
             $table->unsignedBigInteger('contact_employee_id');
             $table->boolean('is_published')->default(0);
@@ -51,6 +52,10 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
+            $table->foreign('company_id')
+                ->references('id')
+                ->on('companies')
+                ->cascadeOnDelete();
             $table->foreign('contact_branch_id')
                 ->references('id')
                 ->on('branches')

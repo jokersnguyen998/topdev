@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\Buyer;
 
+use App\Http\Resources\Common\OccupationResource;
+use App\Http\Resources\Common\WorkingLocationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -51,6 +53,8 @@ class RecruitmentResource extends JsonResource
             'relationships' => [
                 'contact_branch' => new ContactBranchResource($this->whenLoaded('branch')),
                 'contact_employee' => new ContactEmployeeResource($this->whenLoaded('employee')),
+                'occupations' => OccupationResource::collection($this->whenLoaded('occupations')),
+                'working_locations' => WorkingLocationResource::collection($this->whenLoaded('workingLocations')),
             ],
         ];
     }

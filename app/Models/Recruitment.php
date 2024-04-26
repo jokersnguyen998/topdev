@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Traits\HasNumber;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Recruitment extends Model
 {
-    use HasFactory, SoftDeletes, HasNumber;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -19,6 +19,7 @@ class Recruitment extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'company_id',
         'contact_branch_id',
         'contact_employee_id',
         'is_published',
@@ -84,6 +85,11 @@ class Recruitment extends Model
     | Relationships
     |--------------------------------------------------------------------------
     */
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class, 'company_id', 'id');
+    }
+
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class, 'contact_branch_id', 'id');
@@ -116,5 +122,17 @@ class Recruitment extends Model
             'id',
             'id',
         )->withPivot(['detail_address', 'map_url', 'note']);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Scopes
+    |--------------------------------------------------------------------------
+    */
+    public function scopeRevised(Builder $query): Builder
+    {
+        return $query
+                ->join('latest_recruitments', 'latest_recruitments.recruitment_id', '=', 'recruitments.id')
+                ->select('recruitments.*');
     }
 }

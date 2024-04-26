@@ -25,10 +25,14 @@ class CompanyService
      * Update company info
      *
      * @param  UpdateCompanyRequest $request
-     * @return void
+     * @return CompanyResource
      */
-    public function update(UpdateCompanyRequest $request): void
+    public function update(UpdateCompanyRequest $request): CompanyResource
     {
-        $request->user()->company->update($request->validated());
+        $company = $request->user()->company;
+        $company->update($request->validated());
+        return new CompanyResource($company->load([
+            'ward.district.province',
+        ]));
     }
 }

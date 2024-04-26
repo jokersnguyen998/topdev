@@ -38,7 +38,7 @@ class CompanyController extends Controller
      */
     public function update(UpdateCompanyRequest $request): JsonResponse
     {
-        $this->companyService->update($request);
-        return response()->json()->setStatusCode(Response::HTTP_NO_CONTENT);
+        $company = $this->companyService->update($request);
+        return response()->json($company, Response::HTTP_OK);
     }
 }

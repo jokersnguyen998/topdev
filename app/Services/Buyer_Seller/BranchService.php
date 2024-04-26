@@ -46,10 +46,14 @@ class BranchService
      *
      * @param  UpdateBranchRequest $request
      * @param  int                 $id
-     * @return void
+     * @return BranchResource
      */
-    public function update(UpdateBranchRequest $request, int $id): void
+    public function update(UpdateBranchRequest $request, int $id): BranchResource
     {
-        $request->user()->company->branches()->findOrFail($id)->update($request->validated());
+        $branch = $request->user()->company->branches()->findOrFail($id);
+        $branch->update($request->validated());
+        return new BranchResource($branch->load([
+            'ward.district.province',
+        ]));
     }
 }

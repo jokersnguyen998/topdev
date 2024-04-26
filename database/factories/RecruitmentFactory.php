@@ -34,6 +34,7 @@ class RecruitmentFactory extends Factory
         $hasRefund = rand(0, 1);
         $title = $this->faker->jobTitle;
         return [
+            'company_id' => $employee->company_id,
             'contact_branch_id' => $employee->branch_id,
             'contact_employee_id' => $employee->id,
             'is_published' => $isPublished,

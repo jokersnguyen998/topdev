@@ -38,7 +38,7 @@ class EmployeeService
      */
     public function store(StoreEmployeeRequest $request): EmployeeResource
     {
-        return new EmployeeResource(Employee::query()->create($request->validated()));
+        return new EmployeeResource(Employee::query()->create($request->validated())->load('ward.district.province'));
     }
 
     /**
@@ -66,13 +66,15 @@ class EmployeeService
      *
      * @param  UpdateEmployeeRequest $request
      * @param  int                   $id
-     * @return void
+     * @return EmployeeResource
      *
      * @throws NotFoundHttpException
      */
-    public function update(UpdateEmployeeRequest $request, int $id): void
+    public function update(UpdateEmployeeRequest $request, int $id): EmployeeResource
     {
-        Employee::query()->findOrFail($id)->update($request->validated());
+        $employee = Employee::query()->findOrFail($id);
+        $employee->update($request->validated());
+        return new EmployeeResource($employee->load('ward.district.province'));
     }
 
     /**
