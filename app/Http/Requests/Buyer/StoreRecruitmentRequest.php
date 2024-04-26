@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Buyer;
 
+use App\Enums\AdministrativeUnitType;
 use App\Enums\EmploymentType;
 use App\Enums\LaborContractType;
 use App\Enums\ReferralFeeType;
@@ -102,6 +103,18 @@ class StoreRecruitmentRequest extends FormRequest
             'image_1_caption' => 'nullable|max:100',
             'image_2_caption' => 'nullable|max:100',
             'image_3_caption' => 'nullable|max:100',
+
+            'recruitment_occupations.*' => 'nullable|exists:occupations,id',
+
+            'working_locations.*' => 'nullable|array',
+            'working_locations.*.ward_id' => [
+                'required',
+                Rule::exists('administrative_units', 'id')
+                    ->whereIn('type', AdministrativeUnitType::wards()),
+            ],
+            'working_locations.*.detail_address' => 'required|max:255',
+            'working_locations.*.map_url' => 'nullable|max:255',
+            'working_locations.*.note' => 'nullable|max:500',
         ];
     }
 }

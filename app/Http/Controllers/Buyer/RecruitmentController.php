@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 class RecruitmentController extends Controller
 {
     protected RecruitmentService $recruitmentService;
-    
+
     public function __construct(RecruitmentService $recruitmentService)
     {
         $this->recruitmentService = $recruitmentService;
@@ -21,7 +21,7 @@ class RecruitmentController extends Controller
 
     /**
      * List of recruitments
-     * 
+     *
      * @param  Request      $request
      * @return JsonResponse
      */
@@ -33,20 +33,19 @@ class RecruitmentController extends Controller
 
     /**
      * Store recruitment info
-     * 
+     *
      * @param  StoreRecruitmentRequest $request
      * @return JsonResponse
      */
     public function store(StoreRecruitmentRequest $request): JsonResponse
     {
-        dd($request->validated());
         $recruitment = $this->recruitmentService->store($request);
         return response()->json($recruitment, Response::HTTP_CREATED);
     }
-    
+
     /**
      * Show recruitment info
-     * 
+     *
      * @param  Request      $request
      * @param  int          $id
      * @return JsonResponse
@@ -59,7 +58,7 @@ class RecruitmentController extends Controller
 
     /**
      * Update recruitment info
-     * 
+     *
      * @param  UpdateRecruitmentRequest $request
      * @param  int                      $id
      * @return JsonResponse
