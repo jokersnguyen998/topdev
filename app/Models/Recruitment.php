@@ -58,13 +58,6 @@ class Recruitment extends Model
     ];
 
     /**
-     * Set number field length
-     *
-     * @var int
-     */
-    protected $numberLength = 50;
-
-    /**
      * The attributes that should be cast.
      *
      * @var array

@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder
             EmployeeSeeder::class,
             WorkerSeeder::class,
             RecruitmentSeeder::class,
+            BookingSeeder::class,
+            MeetingRoomSeeder::class,
         ]);
     }
 }
