@@ -88,6 +88,8 @@ class EmployeeService
      */
     public function delete(Request $request, int $id): void
     {
-        $request->user()->company->employees()->whereKeyNot($request->user()->id)->findOrFail($id)->delete();
+        Employee::query()->where('company_id', '=', $request->user()->company_id)
+            ->findOrFail($id)
+            ->delete();
     }
 }

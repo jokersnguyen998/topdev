@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Buyer\RecruitmentController as BuyerRecruitmentController;
+use App\Http\Controllers\Buyer\BookingController as BuyerBookingController;
+use App\Http\Controllers\Buyer\MeetingRoomController as BuyerMeetingRoomController;
 use App\Http\Controllers\Seller\CompanyJobIntroductionLicenseController as SellerCompanyJobIntroductionLicenseController;
 use App\Http\Controllers\Seller\BranchJobIntroductionLicenseController as SellerBranchJobIntroductionLicenseController;
 use App\Http\Controllers\Buyer_Seller\AuthController as BuyerSellerAuthController;
@@ -48,12 +50,31 @@ Route::prefix('/buyer')->as('buyer.')->middleware(['auth:sanctum'])->group(funct
         });
     });
 
-    Route::prefix('/recruitments')->as('recruitments.')->group(function () {
+    Route::prefix('/recruitments')->as('recruitment.')->group(function () {
         Route::controller(BuyerRecruitmentController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
             Route::get('/{recruitment_id}', 'show')->name('show')->whereNumber('recruitment_id');
             Route::put('/{recruitment_id}', 'update')->name('update')->whereNumber('recruitment_id');
+        });
+    });
+
+    Route::prefix('/bookings')->as('booking.')->group(function () {
+        Route::controller(BuyerBookingController::class)->group(function () {
+            Route::post('/', 'store')->name('store');
+            Route::get('/{booking_id}', 'show')->name('show')->whereNumber('booking_id');
+            Route::put('/{booking_id}', 'update')->name('update')->whereNumber('booking_id');
+            Route::delete('/{booking_id}', 'delete')->name('delete')->whereNumber('booking_id');
+        });
+    });
+
+    Route::prefix('/meeting-rooms')->as('meeting-rooms.')->group(function () {
+        Route::controller(BuyerMeetingRoomController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{meeting_room_id}', 'show')->name('show')->whereNumber('meeting_room_id');
+            Route::put('/{meeting_room_id}', 'update')->name('update')->whereNumber('meeting_room_id');
+            Route::delete('/{meeting_room_id}', 'delete')->name('delete')->whereNumber('meeting_room_id');
         });
     });
 });
