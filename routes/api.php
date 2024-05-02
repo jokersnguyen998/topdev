@@ -146,6 +146,28 @@ Route::prefix('/worker')->as('worker.')->middleware(['auth:sanctum'])->group(fun
         Route::post('/login', 'login')->withoutMiddleware(['auth:sanctum']);
         Route::delete('/logout', 'logout');
     });
+
+    Route::prefix('/me')->as('me.')->group(function () {
+        Route::prefix('/educations')->as('education.')->group(function () {
+            Route::controller(WorkerEducationController::class)->group(function () {});
+        });
+        Route::prefix('work-experiences')->as('work-experience.')->group(function () {
+            Route::controller(WorkerWorkExperienceController::class)->group(function () {});
+        });
+
+        Route::prefix('licenses')->as('license.')->group(function () {
+            Route::controller(WorkerLicenseController::class)->group(function () {});
+        });
+
+        Route::prefix('skills')->as('skill.')->group(function () {
+            Route::controller(WorkerSkillController::class)->group(function () {});
+        });
+
+        Route::prefix('others')->as('other.')->group(function () {
+            Route::controller(WorkerOtherController::class)->group(function () {});
+        });
+
+    });
 });
 
 /*
