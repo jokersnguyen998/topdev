@@ -2,12 +2,17 @@
 
 namespace App\Models;
 
+use App\Enums\AdministrativeUnitType;
 use App\Traits\HasAdministrativeUnit;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
 
 class Worker extends Authenticatable
@@ -48,6 +53,15 @@ class Worker extends Authenticatable
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'age',
+    ];
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -59,6 +73,21 @@ class Worker extends Authenticatable
             'password' => 'hashed',
             'gender' => 'boolean',
         ];
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Accessors & Mutators
+    |--------------------------------------------------------------------------
+    */
+    public function getGenderAttribute($value)
+    {
+        return $value ? 'Male' : 'Female';
+    }
+
+    public function getAgeAttribute()
+    {
+        return Carbon::parse($this->birthday)->age;
     }
 
     /*
@@ -87,5 +116,35 @@ class Worker extends Authenticatable
     public function scopeWithdrawn(Builder $builder): Builder
     {
         return $builder->whereNull('withdrawn_at');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
+    public function contactWard(): BelongsTo
+    {
+        return $this->belongsTo(AdministrativeUnit::class, 'contact_ward_id', 'id')->wards();
+    }
+
+    public function academicLevels(): HasMany
+    {
+        return $this->hasMany(AcademicLevel::class, 'worker_id', 'id');
+    }
+
+    public function workExperiences(): HasMany
+    {
+        return $this->hasMany(AcademicLevel::class, 'worker_id', 'id');
+    }
+
+    public function licenses(): HasMany
+    {
+        return $this->hasMany(License::class, 'worker_id', 'id');
+    }
+
+    public function skill(): HasOne
+    {
+        return $this->hasOne(Skill::class, 'worker_id', 'id');
     }
 }

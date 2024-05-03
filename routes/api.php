@@ -10,6 +10,7 @@ use App\Http\Controllers\Buyer_Seller\CompanyController as BuyerSellerCompanyCon
 use App\Http\Controllers\Buyer_Seller\BranchController as BuyerSellerBranchController;
 use App\Http\Controllers\Buyer_Seller\EmployeeController as BuyerSellerEmployeeController;
 use App\Http\Controllers\Worker\AuthController as WorkerAuthController;
+use App\Http\Controllers\Worker\MeController as WorkerMeController;
 use App\Http\Controllers\LP\LandingPageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -148,25 +149,27 @@ Route::prefix('/worker')->as('worker.')->middleware(['auth:sanctum'])->group(fun
     });
 
     Route::prefix('/me')->as('me.')->group(function () {
-        Route::prefix('/educations')->as('education.')->group(function () {
-            Route::controller(WorkerEducationController::class)->group(function () {});
-        });
-        Route::prefix('work-experiences')->as('work-experience.')->group(function () {
-            Route::controller(WorkerWorkExperienceController::class)->group(function () {});
-        });
+        Route::controller(WorkerMeController::class)->group(function () {
+            Route::prefix('/academic-levels')->as('academic-level.')->group(function () {
+                Route::put('/', 'updateAcademicLevel')->name('update');
+            });
 
-        Route::prefix('licenses')->as('license.')->group(function () {
-            Route::controller(WorkerLicenseController::class)->group(function () {});
-        });
+            Route::prefix('work-experiences')->as('work-experience.')->group(function () {
+                Route::put('/', 'updateWorkExperience')->name('update');
+            });
 
-        Route::prefix('skills')->as('skill.')->group(function () {
-            Route::controller(WorkerSkillController::class)->group(function () {});
-        });
+            Route::prefix('licenses')->as('license.')->group(function () {
+                Route::put('/', 'updateLicense')->name('update');
+            });
 
-        Route::prefix('others')->as('other.')->group(function () {
-            Route::controller(WorkerOtherController::class)->group(function () {});
-        });
+            Route::prefix('skills')->as('skill.')->group(function () {
+                Route::put('/', 'updateSkill')->name('update');
+            });
 
+            Route::prefix('others')->as('other.')->group(function () {
+                Route::put('/', 'updateOther')->name('update');
+            });
+        });
     });
 });
 
