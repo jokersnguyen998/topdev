@@ -14,6 +14,11 @@ class Branch extends Model
 {
     use HasFactory, SoftDeletes, HasAdministrativeUnit;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'company_id',
         'ward_id',

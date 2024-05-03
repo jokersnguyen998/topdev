@@ -12,6 +12,11 @@ class BranchJobIntroductionLicense extends Model
 {
     use HasFactory, HasAdministrativeUnit, HasService;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'branch_id',
         'ward_id',

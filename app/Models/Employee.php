@@ -15,6 +15,11 @@ class Employee extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens, SoftDeletes, HasAdministrativeUnit;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'branch_id',
         'company_id',
@@ -28,14 +33,29 @@ class Employee extends Authenticatable
         'detail_address',
     ];
 
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<string>
+     */
     protected $hidden = [
         'password',
     ];
 
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
     protected $appends = [
         'age',
     ];
 
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [

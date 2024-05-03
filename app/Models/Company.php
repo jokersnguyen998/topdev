@@ -15,6 +15,11 @@ class Company extends Model
 {
     use HasFactory, SoftDeletes, HasAdministrativeUnit, HasNumber;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'ward_id',
         'number',
@@ -29,6 +34,11 @@ class Company extends Model
         'suspended_at',
     ];
 
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
     protected $appends = [
         'hash_url',
     ];
@@ -40,6 +50,11 @@ class Company extends Model
      */
     protected $numberLength = 20;
 
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
     public function casts(): array
     {
         return [
@@ -52,7 +67,6 @@ class Company extends Model
     | Accessors & Mutators
     |--------------------------------------------------------------------------
     */
-
     public function getHashUrlAttribute(): string
     {
         return base64_encode($this->contact_email);
@@ -63,7 +77,6 @@ class Company extends Model
     | Relationships
     |--------------------------------------------------------------------------
     */
-
     public function companyJobIntroductionLicense(): HasOne
     {
         return $this->hasOne(CompanyJobIntroductionLicense::class, 'company_id', 'id');

@@ -75,6 +75,18 @@ class Recruitment extends Model
 
     /*
     |--------------------------------------------------------------------------
+    | Scopes
+    |--------------------------------------------------------------------------
+    */
+    public function scopeRevised(Builder $query): Builder
+    {
+        return $query
+                ->join('latest_recruitments', 'latest_recruitments.recruitment_id', '=', 'recruitments.id')
+                ->select('recruitments.*');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
     | Relationships
     |--------------------------------------------------------------------------
     */
@@ -115,17 +127,5 @@ class Recruitment extends Model
             'id',
             'id',
         )->withPivot(['detail_address', 'map_url', 'note']);
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Scopes
-    |--------------------------------------------------------------------------
-    */
-    public function scopeRevised(Builder $query): Builder
-    {
-        return $query
-                ->join('latest_recruitments', 'latest_recruitments.recruitment_id', '=', 'recruitments.id')
-                ->select('recruitments.*');
     }
 }

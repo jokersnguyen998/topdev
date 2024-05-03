@@ -12,6 +12,11 @@ class CompanyJobIntroductionLicense extends Model
 {
     use HasFactory, HasAdministrativeUnit, HasService;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'company_id',
         'ward_id',
@@ -26,10 +31,20 @@ class CompanyJobIntroductionLicense extends Model
         'detail_address',
     ];
 
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
     protected $appends = [
         'license_number',
     ];
 
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
     public function casts(): array
     {
         return [
@@ -44,7 +59,6 @@ class CompanyJobIntroductionLicense extends Model
     | Accessors & Mutators
     |--------------------------------------------------------------------------
     */
-
     public function getLicenseNumberAttribute(): string
     {
         return "{$this->license_number_1}-{$this->license_number_2}-{$this->license_number_3}";
@@ -55,7 +69,6 @@ class CompanyJobIntroductionLicense extends Model
     | Relationships
     |--------------------------------------------------------------------------
     */
-
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class, 'company_id', 'id');

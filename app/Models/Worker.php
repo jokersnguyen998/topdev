@@ -14,6 +14,11 @@ class Worker extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens, SoftDeletes, HasAdministrativeUnit;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'ward_id',
         'contact_ward_id',
@@ -33,10 +38,20 @@ class Worker extends Authenticatable
         'last_login_at',
     ];
 
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<string>
+     */
     protected $hidden = [
         'password',
     ];
 
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [
