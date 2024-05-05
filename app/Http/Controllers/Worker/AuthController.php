@@ -7,6 +7,7 @@ use App\Models\Worker;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
@@ -83,7 +84,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'validation error',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
@@ -92,12 +93,16 @@ class AuthController extends Controller
                 'message' => 'Email & Password does not match with our record.',
             ], Response::HTTP_UNAUTHORIZED);
         }
-
-        $worker = Worker::query()->where('email', '=', $request->email)->first();
+        
+        $token = DB::transaction(function () use ($request) {
+            $worker = Worker::query()->where('email', '=', $request->email)->first();
+            $worker->update(['last_login_at' => now()]);
+            return $worker->createToken("WORKER TOKEN")->plainTextToken;
+        });
 
         return response()->json([
             'message' => 'User Logged In Successfully',
-            'token' => $worker->createToken("WORKER TOKEN")->plainTextToken
+            'token' => $token,
         ], Response::HTTP_OK);
     }
 

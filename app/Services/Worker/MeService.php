@@ -3,11 +3,11 @@
 namespace App\Services\Worker;
 
 use App\Http\Requests\Worker\AcademicLevelRequest;
+use App\Http\Requests\Worker\InfoRequest;
 use App\Http\Requests\Worker\LicenseRequest;
 use App\Http\Requests\Worker\SkillRequest;
 use App\Http\Requests\Worker\WorkExperienceRequest;
 use App\Http\Resources\Worker\MeResource;
-use App\Models\JobCareer;
 use App\Models\Skill;
 use Illuminate\Support\Facades\DB;
 
@@ -100,5 +100,20 @@ class MeService
                 'skill.jobCareers',
             ])
         );
+    }
+
+    /**
+     * Update worker info
+     * 
+     * @param  InfoRequest $request
+     * @return MeResource
+     */
+    public function updateInfo(InfoRequest $request): MeResource
+    {
+        $request->user()->update($request->validated());
+        return new MeResource($request->user()->load([
+            'ward.district.province',
+            'contactWard.district.province',
+        ]));
     }
 }

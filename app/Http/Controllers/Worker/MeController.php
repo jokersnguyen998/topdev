@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Worker;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Worker\AcademicLevelRequest;
 use App\Http\Requests\Worker\LicenseRequest;
+use App\Http\Requests\Worker\InfoRequest;
 use App\Http\Requests\Worker\SkillRequest;
 use App\Http\Requests\Worker\WorkExperienceRequest;
 use App\Services\Worker\MeService;
@@ -65,6 +66,12 @@ class MeController extends Controller
     public function updateSkill(SkillRequest $request): JsonResponse
     {
         $worker = $this->meService->updateSkill($request);request:
+        return response()->json($worker, Response::HTTP_OK);
+    }
+
+    public function updateInfo(InfoRequest $request): JsonResponse
+    {
+        $worker = $this->meService->updateInfo($request);
         return response()->json($worker, Response::HTTP_OK);
     }
 }

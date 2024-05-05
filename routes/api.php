@@ -166,8 +166,8 @@ Route::prefix('/worker')->as('worker.')->middleware(['auth:sanctum'])->group(fun
                 Route::put('/', 'updateSkill')->name('update');
             });
 
-            Route::prefix('others')->as('other.')->group(function () {
-                Route::put('/', 'updateOther')->name('update');
+            Route::prefix('info')->as('info.')->group(function () {
+                Route::put('/', 'updateInfo')->name('update');
             });
         });
     });

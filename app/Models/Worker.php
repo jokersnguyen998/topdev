@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\AdministrativeUnitType;
 use App\Traits\HasAdministrativeUnit;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

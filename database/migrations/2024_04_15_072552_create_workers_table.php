@@ -18,9 +18,9 @@ return new class extends Migration
             $table->string('name', 50);
             $table->string('email', 100)->unique();
             $table->string('password', 255);
-            $table->string('phone_number', 20);
+            $table->string('phone_number', 20)->nullable();
             $table->boolean('gender')->nullable();
-            $table->date('birthday');
+            $table->date('birthday')->nullable();
             $table->string('detail_address', 255)->nullable();
             $table->string('avatar_url', 255)->nullable();
             $table->string('contact_detail_address', 255)->nullable();
