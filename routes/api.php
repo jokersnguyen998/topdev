@@ -11,6 +11,7 @@ use App\Http\Controllers\Buyer_Seller\BranchController as BuyerSellerBranchContr
 use App\Http\Controllers\Buyer_Seller\EmployeeController as BuyerSellerEmployeeController;
 use App\Http\Controllers\Worker\AuthController as WorkerAuthController;
 use App\Http\Controllers\Worker\MeController as WorkerMeController;
+use App\Http\Controllers\Worker\ReferralConnectionController as WorkerReferralConnectionController;
 use App\Http\Controllers\LP\LandingPageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -169,6 +170,14 @@ Route::prefix('/worker')->as('worker.')->middleware(['auth:sanctum'])->group(fun
             Route::prefix('info')->as('info.')->group(function () {
                 Route::put('/', 'updateInfo')->name('update');
             });
+        });
+    });
+
+    Route::prefix('referral-connections')->as('referral-connection.')->group(function () {
+        Route::controller(WorkerReferralConnectionController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::delete('/{referral_connection_id}', 'delete')->name('delete')->whereNumber('referral_connection_id');
         });
     });
 });
