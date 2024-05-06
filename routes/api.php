@@ -56,6 +56,8 @@ Route::prefix('/buyer')->as('buyer.')->middleware(['auth:sanctum'])->group(funct
             Route::post('/', 'store')->name('store');
             Route::get('/{recruitment_id}', 'show')->name('show')->whereNumber('recruitment_id');
             Route::put('/{recruitment_id}', 'update')->name('update')->whereNumber('recruitment_id');
+            Route::post('/import-csv', 'import')->name('import');
+            Route::post('/export-csv', 'export')->name('export');
         });
     });
 

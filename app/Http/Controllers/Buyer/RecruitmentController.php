@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Buyer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Buyer\ImportRecruitmentRequest;
 use App\Http\Requests\Buyer\StoreRecruitmentRequest;
 use App\Http\Requests\Buyer\UpdateRecruitmentRequest;
 use App\Services\Buyer\RecruitmentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class RecruitmentController extends Controller
@@ -67,5 +69,12 @@ class RecruitmentController extends Controller
     {
         $recruitment = $this->recruitmentService->update($request, $id);
         return response()->json($recruitment, Response::HTTP_OK);
+    }
+
+    public function export(ImportRecruitmentRequest $request): BinaryFileResponse
+    {
+        $file = $this->recruitmentService->export($request);
+        $headers = ['Content-Type: application/csv'];
+        return response()->download($file, null, $headers);
     }
 }

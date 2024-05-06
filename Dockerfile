@@ -12,30 +12,39 @@ COPY composer.lock composer.json /var/www/html/
 WORKDIR /var/www/html
 
 # Install Additional dependencies
-RUN apt-get update && apt-get install -y \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
-    libmcrypt-dev \
-    libpng-dev \
-    libicu-dev \
-    libpq-dev \
-    libxpm-dev \
-    libvpx-dev \
-    libzip-dev \
-    build-essential \
-    locales \
-    zip \
-    jpegoptim optipng pngquant gifsicle \
-    vim \
-    zip \
-    git \
-    curl \
-    supervisor \
-    ssh
+RUN apt-get update \
+    && apt-get install -y \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
+        libmcrypt-dev \
+        libpng-dev \
+        libicu-dev \
+        libpq-dev \
+        libxpm-dev \
+        libvpx-dev \
+        libzip-dev \
+        build-essential \
+        locales \
+        jpegoptim optipng pngquant gifsicle \
+        vim \
+        zip \
+        git \
+        curl \
+        supervisor \
+        ssh \
+    && docker-php-ext-install \
+        exif \
+        mysqli \
+        pdo \
+        pdo_mysql \
+        zip \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-install opcache
 
 # Add and Enable PHP-PDO Extenstions
-RUN docker-php-ext-install pdo pdo_mysql
-RUN docker-php-ext-enable pdo_mysql
+# RUN docker-php-ext-install pdo pdo_mysql
+# RUN docker-php-ext-enable pdo_mysql
 
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

@@ -2,6 +2,8 @@
 
 namespace App\Services\Buyer;
 
+use App\Exports\RecruitmentCsvExport;
+use App\Http\Requests\Buyer\ImportRecruitmentRequest;
 use App\Http\Requests\Buyer\StoreRecruitmentRequest;
 use App\Http\Requests\Buyer\UpdateRecruitmentRequest;
 use App\Http\Resources\Buyer\RecruitmentResource;
@@ -9,6 +11,10 @@ use App\Models\Recruitment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class RecruitmentService
@@ -153,5 +159,19 @@ class RecruitmentService
         $data['company_id'] = $originRecruitment->company_id;
         $recruitment = Recruitment::query()->create($data);
         return $recruitment;
+    }
+
+    public function export(ImportRecruitmentRequest $request): string
+    {
+        $recruitments = Recruitment::query()
+            ->where('company_id', '=', $request->user()->company_id)
+            ->with([
+                'branch',
+                'employee',
+                'occupations',
+                'workingLocations.district.province',
+            ])
+            ->get();
+        return (new RecruitmentCsvExport)->handle($recruitments);
     }
 }
