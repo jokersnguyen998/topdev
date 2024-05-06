@@ -15,11 +15,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('company_id');
             $table->unsignedBigInteger('worker_id');
-            $table->timestamp('published_resume_at');
-            $table->timestamp('published_experience_at');
-            $table->timestamp('requested_to_enter_resume_at');
-            $table->timestamp('completed_resume_at');
-            $table->boolean('is_first');
+            $table->timestamp('published_resume_at')->nullable();
+            $table->timestamp('published_experience_at')->nullable();
+            $table->timestamp('requested_to_enter_resume_at')->nullable();
+            $table->timestamp('completed_resume_at')->nullable();
+            $table->boolean('is_first')->default(0);
+            $table->text('memo')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

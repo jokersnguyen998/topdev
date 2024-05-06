@@ -146,4 +146,9 @@ class Worker extends Authenticatable
     {
         return $this->hasOne(Skill::class, 'worker_id', 'id');
     }
+
+    public function referralConnections(): HasMany
+    {
+        return $this->hasMany(ReferralConnection::class, 'worker_id', 'id');
+    }
 }

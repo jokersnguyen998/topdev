@@ -25,6 +25,7 @@ class ReferralConnection extends Model
         'requested_to_enter_resume_at',
         'completed_resume_at',
         'is_first',
+        'memo',
     ];
 
     /**
@@ -70,7 +71,7 @@ class ReferralConnection extends Model
     {
         return $builder->whereNull('published_resume_at');
     }
-    
+
     /**
      * Publish experience
      *
@@ -92,7 +93,7 @@ class ReferralConnection extends Model
     {
         return $builder->whereNull('published_experience_at');
     }
-    
+
     /**
      * Requested to enter resume
      *
@@ -105,7 +106,7 @@ class ReferralConnection extends Model
     }
 
     /**
-     * Requested to enter resume
+     * Completed resume
      *
      * @param  Builder $builder
      * @return Builder
@@ -120,7 +121,7 @@ class ReferralConnection extends Model
     | Relationships
     |--------------------------------------------------------------------------
     */
-    public function seller(): BelongsTo
+    public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class, 'company_id', 'id');
     }

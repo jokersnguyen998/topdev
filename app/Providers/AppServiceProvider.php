@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Employee;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Model::shouldBeStrict();
         Gate::define('valid-license', function (Employee $user) {
             $companyJobIntroductionLicense = $user->company?->companyJobIntroductionLicense;
             return $companyJobIntroductionLicense && $companyJobIntroductionLicense->expired_date->gte(today());

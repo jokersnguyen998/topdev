@@ -21,8 +21,6 @@ class DatabaseSeeder extends Seeder
             BranchJobIntroductionLicenseSeeder::class,
             EmployeeSeeder::class,
             WorkerSeeder::class,
-            AcademicLevelSeeder::class,
-            WorkExperienceSeeder::class,
             RecruitmentSeeder::class,
             BookingSeeder::class,
             MeetingRoomSeeder::class,

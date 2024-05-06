@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Worker;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company;
+use App\Models\ReferralConnection;
 use App\Models\Worker;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -32,6 +34,18 @@ class AuthController extends Controller
                 'avatar_url' => 'nullable|max:255',
                 'contact_detail_address' => 'nullable|max:255',
                 'contact_phone_number' => 'nullable|max:20',
+                'hash_url' => [
+                    'required',
+                    function (string $attribute, mixed $value, \Closure $fail) {
+                        $company = Company::query()
+                            ->where('contact_email', '=', base64_decode($value))
+                            ->first('id');
+
+                        if (is_null($company)) {
+                            $fail("The selected :attribute is invalid.");
+                        }
+                    }
+                ],
             ]
         );
 
@@ -42,22 +56,36 @@ class AuthController extends Controller
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $worker = Worker::query()->create(
-            $request->only([
-                'ward_id',
-                'contact_ward_id',
-                'name',
-                'email',
-                'password',
-                'phone_number',
-                'gender',
-                'birthday',
-                'detail_address',
-                'avatar_url',
-                'contact_detail_address',
-                'contact_phone_number',
-            ])
-        );
+        $company = Company::query()
+            ->where('contact_email', '=', base64_decode($request->hash_url))
+            ->first('id');
+
+        $worker = DB::transaction(function () use ($request, $company) {
+            $worker = Worker::query()->create(
+                $request->only([
+                    'ward_id',
+                    'contact_ward_id',
+                    'name',
+                    'email',
+                    'password',
+                    'phone_number',
+                    'gender',
+                    'birthday',
+                    'detail_address',
+                    'avatar_url',
+                    'contact_detail_address',
+                    'contact_phone_number',
+                ])
+            );
+
+            ReferralConnection::query()->create([
+                'worker_id' => $worker->id,
+                'company_id' => $company->id,
+                'is_first' => 1,
+            ]);
+
+            return $worker;
+        });
 
         return response()->json([
             'message' => 'User Created Successfully',
@@ -93,7 +121,7 @@ class AuthController extends Controller
                 'message' => 'Email & Password does not match with our record.',
             ], Response::HTTP_UNAUTHORIZED);
         }
-        
+
         $token = DB::transaction(function () use ($request) {
             $worker = Worker::query()->where('email', '=', $request->email)->first();
             $worker->update(['last_login_at' => now()]);
