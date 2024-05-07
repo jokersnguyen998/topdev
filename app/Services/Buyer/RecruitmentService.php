@@ -166,12 +166,12 @@ class RecruitmentService
         $recruitments = Recruitment::query()
             ->where('company_id', '=', $request->user()->company_id)
             ->with([
-                'branch',
-                'employee',
+                // 'branch',
+                // 'employee',
                 'occupations',
                 'workingLocations.district.province',
             ])
             ->get();
-        return (new RecruitmentCsvExport)->handle($recruitments);
+        return (new RecruitmentCsvExport)->handle($recruitments, 'recruitment.csv');
     }
 }
