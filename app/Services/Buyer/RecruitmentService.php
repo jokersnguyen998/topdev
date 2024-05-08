@@ -147,7 +147,7 @@ class RecruitmentService
     }
 
     /**
-     * Undocumented function
+     * Store from the original recruitment info
      *
      * @param  array       $data
      * @param  Recruitment $originRecruitment
@@ -161,17 +161,27 @@ class RecruitmentService
         return $recruitment;
     }
 
-    public function export(ImportRecruitmentRequest $request): string
+    /**
+     * Export recruitment info
+     *
+     * @param  ImportRecruitmentRequest $request
+     * @param  string                   $fileName
+     * @return string
+     */
+    public function export(ImportRecruitmentRequest $request, string $fileName): string
     {
         $recruitments = Recruitment::query()
             ->where('company_id', '=', $request->user()->company_id)
             ->with([
-                // 'branch',
-                // 'employee',
+                'branch',
+                'employee',
                 'occupations',
                 'workingLocations.district.province',
             ])
             ->get();
-        return (new RecruitmentCsvExport)->handle($recruitments, 'recruitment.csv');
+
+        (new RecruitmentCsvExport)->handle($recruitments)->save($fileName);
+
+        return $fileName;
     }
 }

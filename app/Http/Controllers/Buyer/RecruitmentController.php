@@ -71,10 +71,16 @@ class RecruitmentController extends Controller
         return response()->json($recruitment, Response::HTTP_OK);
     }
 
+    /**
+     * Export recruitment info
+     *
+     * @param  ImportRecruitmentRequest $request
+     * @return BinaryFileResponse
+     */
     public function export(ImportRecruitmentRequest $request): BinaryFileResponse
     {
-        $file = $this->recruitmentService->export($request);
-        $headers = ['Content-Type: application/csv'];
-        return response()->download($file, null, $headers);
+        return response()->download(
+            $this->recruitmentService->export($request, 'recruitment.csv')
+        )->deleteFileAfterSend();
     }
 }

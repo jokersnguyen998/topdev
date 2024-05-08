@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\RelationshipsTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Recruitment extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, RelationshipsTrait;
 
     /**
      * The attributes that are mass assignable.

@@ -3,129 +3,143 @@
 namespace App\Exports;
 
 use Illuminate\Database\Eloquent\Collection;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use PhpOffice\PhpSpreadsheet\Writer\IWriter;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Support\Str;
 
-final class RecruitmentCsvExport
+final class RecruitmentCsvExport extends BaseExport
 {
-    protected Spreadsheet $spreadsheet;
-    protected Worksheet $activeWorksheet;
-    protected IWriter $writer;
-    protected int $currentRow;
-    protected array $columns = [];
-    protected array $attributes = [];
-
     public function __construct()
     {
-        $this->spreadsheet = new Spreadsheet();
-        $this->activeWorksheet = $this->spreadsheet->getActiveSheet();
-        $this->writer = IOFactory::createWriter($this->spreadsheet, 'Csv');
+        parent::__construct('Csv');
+
         // $this->writer->setDelimiter(';');
         // $this->writer->setEnclosure('"');
         // $this->writer->setLineEnding("\r\n");
         // $this->writer->setSheetIndex(0);
-        $this->writer->setPreCalculateFormulas(false);
+        // $this->writer->setPreCalculateFormulas(false);
         $this->writer->setUseBOM(true);
-        $this->currentRow = 1;
-        $this->columns = array_values($this->columns());
-        $this->attributes = array_keys($this->columns());
-        $this->headings();
     }
 
-    public function handle(Collection $collection, string $fileName = null)
+    /**
+     * Handling data
+     *
+     * @param  Collection  $collection
+     * @return self
+     */
+    public function handle(Collection $collection): self
     {
-        $fileName = $fileName ?? time() . '.' . 'csv';
+        foreach ($collection as $recruit) {
+            dd($recruit->workingLocations->first()->toArray());
+            $maxRowPerRecruit = $this->currentRow + max($recruit->occupations->count(), $recruit->workingLocations->count());
+            for ($col = 1; $col <= count($this->columns); $col++) {
+                $index = 0;
+                $indexRowPerRecruit = 0;
+                for ($row = $this->currentRow; $row < $maxRowPerRecruit; $row++) {
+                    // TODO:FIXME: Access properties by dot
+                    $keys = explode('.', $this->keys[$col - 1]);
+                    if (count($keys) > 1) {
+                        $attribute = Str::camel($keys[0]);
 
-        foreach ($collection as $item) {
-            // $item = $item->toArray();
-        }
+                        switch (strtolower($recruit->relationships($attribute)[0])) {
+                            case strtolower(parent::RELATION_BELONGSTO):
+                            case strtolower(parent::RELATION_HASONE):
+                                $value = $recruit->{$attribute}->{$keys[1]};
 
-        $this->writer->save($fileName);
+                                if ($indexRowPerRecruit > 0) {
+                                    $value = '';
+                                }
 
-        return $fileName;
-    }
+                                break;
 
-    private function headings(): void
-    {
-        // Initialize the column's index value = 1
-        $columnIndex = 1;
-        foreach ($this->columns as $column) {
-            // If value is array
-            if (is_array($column)) {
-                // Get all attribute keys from the array
-                $keys = array_keys($column);
-                foreach (array_values($column) as $i => $v) {
-                    // Set the column name corresponding to each attribute
-                    $this->setCellValue($columnIndex, $this->currentRow, $column[$keys[$i]]);
-                    // Increase the value of the column's index
-                    $columnIndex++;
+                            case strtolower(parent::RELATION_HASMANY):
+                            case strtolower(parent::RELATION_BELONGSTOMANY):
+                                if (!isset($recruit->{$attribute}[$index])) break 2;
+
+                                $value = $recruit->{$attribute}[$index]->{$keys[1]};
+                                if ($value instanceof Pivot) {
+                                    $value = $value->{$keys[2]};
+                                }
+
+                                $index++;
+                                break;
+
+                            default:
+                                $value = '';
+                                break;
+                        }
+
+                    } else {
+
+                        $value = $recruit->{$keys[0]};
+
+                        if ($indexRowPerRecruit > 0 && $keys[0] != 'id') {
+                            $value = '';
+                        }
+                    }
+
+                    $this->setCellValue($col, $row, $value);
+
+                    $indexRowPerRecruit++;
                 }
-                continue;
             }
 
-            // Set the column name corresponding to each attribute
-            $this->setCellValue($columnIndex, $this->currentRow, $column);
-            // Increase the value of the column's index
-            $columnIndex++;
+            $this->currentRow = $maxRowPerRecruit;
         }
-        // Increase the value of the row's index by 1
-        $this->currentRow += 1;
+
+        return $this;
     }
 
-    private function setCellValue($columnIndex, $currentRow, $value): Worksheet
-    {
-        $this->activeWorksheet->setCellValue([$columnIndex, $currentRow], $value);
-        return $this->activeWorksheet;
-    }
-
+    /**
+     * Define columns
+     *
+     * @return array
+     */
     public function columns(): array
     {
         return [
-            'id' => 'ID',
-            'number' => 'Recruitment No.',
-            'title' => 'Title',
-            'sub_title' => 'Sub Title',
-            'content' => 'Content',
-            'is_published' => 'Published Status',
-            'publish_start_date' => 'Publish Start Date',
-            'publish_end_date' => 'Publish End Date',
-            'contact_branch_id' => 'Branch ID',
-            'contact_employee_id' => 'Employee ID',
-            'salary_type' => 'Salary Type',
-            'salary' => 'Salary',
-            'monthly_salary' => 'Monthly Salary',
-            'yearly_salary' => 'Yearly Salary',
-            'has_referral_fee' => 'Referral Fee',
-            'referral_fee_type' => 'Referral Fee Type',
-            'referral_fee_note' => 'Referral Fee Note',
-            'referral_fee_by_value' => 'Referral Fee By Value',
-            'has_refund' => 'Refund Fee',
-            'refund_note' => 'Refund Note',
-            'contact_email' => 'Contact Email',
-            'contact_phone_number' => 'Contact Phone Number',
-            'holiday' => 'Holiday',
-            'welfare' => 'Welfare',
-            'employment_type' => 'Employment Type',
-            'employment_note' => 'Employment Note',
-            'labor_contract_type' => 'Labor Contract Type',
-            'video_url' => 'Video Url',
-            'image_1_url' => 'Image 1 Url',
-            'image_2_url' => 'Image 2 Url',
-            'image_3_url' => 'Image 3 Url',
-            'image_1_caption' => 'Image 1 Caption',
-            'image_2_caption' => 'Image 2 Caption',
-            'image_3_caption' => 'Image 3 Caption',
-            'created_at' => 'Created At',
-            'occupations' => [
-                'id' => 'Occupation ID',
-                'name' => 'Occupation Name',
-            ],
-            'working_locations' => [
-                'id' => 'Working Location Id',
-                'name' => 'Working Location Name',
-            ]
+            'number'                 => 'No.',
+            'title'                  => 'Title',
+            'sub_title'              => 'Sub Title',
+            'content'                => 'Content',
+            'is_published'           => 'Published Status',
+            'publish_start_date'     => 'Publish Start Date',
+            'publish_end_date'       => 'Publish End Date',
+            'branch.name'            => 'Branch Name',
+            'employee.name'          => 'Employee Name',
+            'salary_type'            => 'Salary Type',
+            'salary'                 => 'Salary',
+            'monthly_salary'         => 'Monthly Salary',
+            'yearly_salary'          => 'Yearly Salary',
+            'has_referral_fee'       => 'Referral Fee',
+            'referral_fee_type'      => 'Referral Fee Type',
+            'referral_fee_note'      => 'Referral Fee Note',
+            'referral_fee_by_value'  => 'Referral Fee By Value',
+            'has_refund'             => 'Refund Fee',
+            'refund_note'            => 'Refund Note',
+            'contact_email'          => 'Contact Email',
+            'contact_phone_number'   => 'Contact Phone Number',
+            'holiday'                => 'Holiday',
+            'welfare'                => 'Welfare',
+            'employment_type'        => 'Employment Type',
+            'employment_note'        => 'Employment Note',
+            'labor_contract_type'    => 'Labor Contract Type',
+            'video_url'              => 'Video Url',
+            'image_1_url'            => 'Image 1 Url',
+            'image_2_url'            => 'Image 2 Url',
+            'image_3_url'            => 'Image 3 Url',
+            'image_1_caption'        => 'Image 1 Caption',
+            'image_2_caption'        => 'Image 2 Caption',
+            'image_3_caption'        => 'Image 3 Caption',
+            'created_at'             => 'Created At',
+            'occupations.id'         => 'Occupation ID',
+            'occupations.name'       => 'Occupation Name',
+            'working_locations.id' => 'Location ID',
+            'working_locations.name' => 'Ward',
+            'working_locations.district.name' => 'District',
+            'working_locations.district.province.name' => 'Province',
+            'working_locations.pivot.detail_address' => 'Detail Address',
+            'working_locations.pivot.map_url' => 'Map URL',
+            'working_locations.pivot.note' => 'Location Note',
         ];
     }
 }
