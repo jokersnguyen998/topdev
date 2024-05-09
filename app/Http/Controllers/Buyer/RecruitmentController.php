@@ -84,6 +84,12 @@ class RecruitmentController extends Controller
         )->deleteFileAfterSend();
     }
 
+    /**
+     * Import recruitment info
+     * 
+     * @param  ImportRecruitmentRequest $request
+     * @return JsonResponse
+     */
     public function import(ImportRecruitmentRequest $request): JsonResponse
     {
         $this->recruitmentService->import($request);

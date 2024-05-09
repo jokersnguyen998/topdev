@@ -186,6 +186,12 @@ class RecruitmentService
         return $fileName;
     }
 
+    /**
+     * Import recruitment info
+     * 
+     * @param  ImportRecruitmentRequest $request
+     * @return void
+     */
     public function import(ImportRecruitmentRequest $request)
     {
         (new RecruitmentCsvImport)->load($request->file)->toArray();
