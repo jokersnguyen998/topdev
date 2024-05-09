@@ -23,7 +23,7 @@ class ImportRecruitmentRequest extends FormRequest
     {
         return [
             'file' => [
-                'nullable',
+                'required',
                 'mimes:csv',
                 'max:50000',
             ]

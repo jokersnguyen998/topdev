@@ -7,6 +7,7 @@ use App\Http\Requests\Buyer\ImportRecruitmentRequest;
 use App\Http\Requests\Buyer\StoreRecruitmentRequest;
 use App\Http\Requests\Buyer\UpdateRecruitmentRequest;
 use App\Http\Resources\Buyer\RecruitmentResource;
+use App\Imports\RecruitmentCsvImport;
 use App\Models\Recruitment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -164,11 +165,11 @@ class RecruitmentService
     /**
      * Export recruitment info
      *
-     * @param  ImportRecruitmentRequest $request
-     * @param  string                   $fileName
+     * @param  Request $request
+     * @param  string  $fileName
      * @return string
      */
-    public function export(ImportRecruitmentRequest $request, string $fileName): string
+    public function export(Request $request, string $fileName): string
     {
         $recruitments = Recruitment::query()
             ->where('company_id', '=', $request->user()->company_id)
@@ -183,5 +184,10 @@ class RecruitmentService
         (new RecruitmentCsvExport)->handle($recruitments)->save($fileName);
 
         return $fileName;
+    }
+
+    public function import(ImportRecruitmentRequest $request)
+    {
+        (new RecruitmentCsvImport)->load($request->file)->toArray();
     }
 }
