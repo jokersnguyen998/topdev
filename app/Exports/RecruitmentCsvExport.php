@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 final class RecruitmentCsvExport extends BaseExport
@@ -22,7 +23,7 @@ final class RecruitmentCsvExport extends BaseExport
     /**
      * Handling data
      *
-     * @param  Collection  $collection
+     * @param  Collection $collection
      * @return self
      */
     public function handle(Collection $collection): self
@@ -56,6 +57,15 @@ final class RecruitmentCsvExport extends BaseExport
                             : Str::snake($key);
 
                         $value = $value[$key];
+
+                        if (is_bool($value)) {
+                            $value = (int) $value;
+                        }
+
+                        if ($value instanceof Carbon) {
+                            $value = $value->timezone('Asia/Ho_Chi_Minh')->toDateTimeString();
+                        }
+
                     }
 
                     $cell = $this->getCell($col, $row)->setValue($value);
