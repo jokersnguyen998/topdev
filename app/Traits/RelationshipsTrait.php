@@ -5,6 +5,7 @@ namespace App\Traits;
 use ErrorException;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -41,7 +42,7 @@ trait RelationshipsTrait
 
         $relationships = array_filter(
             $relationships,
-            fn ($item, $key) => is_null($relation) ? true : $key == $relation,
+            fn ($v, $k) => is_null($relation) ? true : $k === Str::camel($relation),
             ARRAY_FILTER_USE_BOTH
         );
 

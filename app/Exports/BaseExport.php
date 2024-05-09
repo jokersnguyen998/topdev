@@ -3,7 +3,9 @@
 namespace App\Exports;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
@@ -11,11 +13,6 @@ use PhpOffice\PhpSpreadsheet\Writer\IWriter;
 
 abstract class BaseExport
 {
-    public const RELATION_BELONGSTO = 'BelongsTo';
-    public const RELATION_HASONE = 'HasOne';
-    public const RELATION_HASMANY = 'HasMany';
-    public const RELATION_BELONGSTOMANY = 'BelongsToMany';
-
     protected Spreadsheet $spreadsheet;
     protected Worksheet $activeWorksheet;
     protected IWriter $writer;
@@ -61,8 +58,9 @@ abstract class BaseExport
         // Initialize the column's index value = 1
         $columnIndex = 1;
         foreach ($this->columns as $column) {
+            $value = is_array($column) ? data_get($column, 'name') : $column;
             // Set the column name corresponding to each attribute
-            $this->setCellValue($columnIndex, $this->currentRow, $column);
+            $this->getCell($columnIndex, $this->currentRow)->setValue($value);
             // Increase the value of the column's index
             $columnIndex++;
         }
@@ -71,17 +69,15 @@ abstract class BaseExport
     }
 
     /**
-     * Set cell value
+     * Get cell address
      *
-     * @param  mixed     $currentCol
-     * @param  mixed     $currentRow
-     * @param  mixed     $value
-     * @return Worksheet
+     * @param  mixed $currentCol
+     * @param  mixed $currentRow
+     * @return Cell
      */
-    public function setCellValue($currentCol, $currentRow, $value): Worksheet
+    public function getCell($currentCol, $currentRow): Cell
     {
-        $this->activeWorksheet->setCellValue([$currentCol, $currentRow], $value);
-        return $this->activeWorksheet;
+        return $this->activeWorksheet->getCell([$currentCol, $currentRow]);
     }
 
     /**
@@ -96,5 +92,24 @@ abstract class BaseExport
         $fileName = explode('.', $fileName)[0];
         $fileName = $fileName . '.' . 'csv';
         $this->writer->save($fileName);
+    }
+
+    /**
+     * Find max row number of model
+     *
+     * @param  Model $model
+     * @param  array $relations
+     * @return int
+     */
+    public function maxRawOfModel(Model $model, array $relations): int
+    {
+        return collect($relations)
+            ->filter(fn ($v, $k) => array_uintersect(
+                [$model->relationships($k)[0]],
+                ['hasMany', 'belongsToMany', 'morphMany', 'morphToMany', 'morphedByMany'],
+                'strcasecmp'
+            ))
+            ->map(fn ($v) => $v->count())
+            ->max();
     }
 }

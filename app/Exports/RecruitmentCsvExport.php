@@ -3,7 +3,6 @@
 namespace App\Exports;
 
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Str;
 
 final class RecruitmentCsvExport extends BaseExport
@@ -29,55 +28,44 @@ final class RecruitmentCsvExport extends BaseExport
     public function handle(Collection $collection): self
     {
         foreach ($collection as $recruit) {
-            dd($recruit->workingLocations->first()->toArray());
-            $maxRowPerRecruit = $this->currentRow + max($recruit->occupations->count(), $recruit->workingLocations->count());
+            $recruitRelations = $recruit->getRelations();
+            $maxRowPerRecruit = $this->currentRow + $this->maxRawOfModel($recruit, $recruitRelations);
             for ($col = 1; $col <= count($this->columns); $col++) {
+
                 $index = 0;
                 $indexRowPerRecruit = 0;
                 for ($row = $this->currentRow; $row < $maxRowPerRecruit; $row++) {
-                    // TODO:FIXME: Access properties by dot
+
+                    $value = $recruit;
                     $keys = explode('.', $this->keys[$col - 1]);
-                    if (count($keys) > 1) {
-                        $attribute = Str::camel($keys[0]);
+                    foreach ($keys as $keyIndex => $key) {
 
-                        switch (strtolower($recruit->relationships($attribute)[0])) {
-                            case strtolower(parent::RELATION_BELONGSTO):
-                            case strtolower(parent::RELATION_HASONE):
-                                $value = $recruit->{$attribute}->{$keys[1]};
-
-                                if ($indexRowPerRecruit > 0) {
-                                    $value = '';
-                                }
-
-                                break;
-
-                            case strtolower(parent::RELATION_HASMANY):
-                            case strtolower(parent::RELATION_BELONGSTOMANY):
-                                if (!isset($recruit->{$attribute}[$index])) break 2;
-
-                                $value = $recruit->{$attribute}[$index]->{$keys[1]};
-                                if ($value instanceof Pivot) {
-                                    $value = $value->{$keys[2]};
-                                }
-
-                                $index++;
-                                break;
-
-                            default:
-                                $value = '';
-                                break;
+                        if ($key === '*') {
+                            if (!isset($value[$index])) break 2;
+                            $value = $value[$index];
+                            $index++;
+                            continue;
                         }
 
-                    } else {
+                        $haystack = $keyIndex != 0
+                            ? array_keys($value->getRelations())
+                            : array_keys($recruitRelations);
 
-                        $value = $recruit->{$keys[0]};
+                        $key = in_array(Str::camel($key), $haystack)
+                            ? Str::camel($key)
+                            : Str::snake($key);
 
-                        if ($indexRowPerRecruit > 0 && $keys[0] != 'id') {
-                            $value = '';
-                        }
+                        $value = $value[$key];
                     }
 
-                    $this->setCellValue($col, $row, $value);
+                    $cell = $this->getCell($col, $row)->setValue($value);
+
+                    if (is_array($v = $this->columns[$col - 1]) && isset($v['type'])) {
+                        $cell
+                            ->getStyle()
+                            ->getNumberFormat()
+                            ->setFormatCode($v['type']);
+                    }
 
                     $indexRowPerRecruit++;
                 }
@@ -131,15 +119,15 @@ final class RecruitmentCsvExport extends BaseExport
             'image_2_caption'        => 'Image 2 Caption',
             'image_3_caption'        => 'Image 3 Caption',
             'created_at'             => 'Created At',
-            'occupations.id'         => 'Occupation ID',
-            'occupations.name'       => 'Occupation Name',
-            'working_locations.id' => 'Location ID',
-            'working_locations.name' => 'Ward',
-            'working_locations.district.name' => 'District',
-            'working_locations.district.province.name' => 'Province',
-            'working_locations.pivot.detail_address' => 'Detail Address',
-            'working_locations.pivot.map_url' => 'Map URL',
-            'working_locations.pivot.note' => 'Location Note',
+            'occupations.*.id'                           => 'Occupation ID',
+            'occupations.*.name'                         => 'Occupation Name',
+            'working_locations.*.id'                     => 'Location ID',
+            'working_locations.*.name'                   => 'Ward',
+            'working_locations.*.district.name'          => 'District',
+            'working_locations.*.district.province.name' => 'Province',
+            'working_locations.*.pivot.detail_address'   => 'Detail Address',
+            'working_locations.*.pivot.map_url'          => 'Map URL',
+            'working_locations.*.pivot.note'             => 'Location Note',
         ];
     }
 }

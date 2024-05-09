@@ -4,11 +4,13 @@ namespace App\Models;
 
 use App\Traits\RelationshipsTrait;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
 class Recruitment extends Model
 {
@@ -72,6 +74,13 @@ class Recruitment extends Model
             'publish_start_date' => 'date:Y-m-d',
             'publish_end_date' => 'date:Y-m-d',
         ];
+    }
+
+    public function createdAt(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => Carbon::parse($value)->toDateTimeString()
+        );
     }
 
     /*
