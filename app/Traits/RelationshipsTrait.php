@@ -47,7 +47,7 @@ trait RelationshipsTrait
         );
 
         if (!is_null($relation) && count($relationships) === 0) {
-            throw new \Exception("Method $relation not exists,");
+            throw new \Exception("Method $relation not exists.");
         }
 
         return $relation ? Arr::flatten($relationships) : $relationships;

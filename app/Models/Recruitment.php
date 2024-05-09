@@ -76,13 +76,6 @@ class Recruitment extends Model
         ];
     }
 
-    public function createdAt(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => Carbon::parse($value)->toDateTimeString()
-        );
-    }
-
     /*
     |--------------------------------------------------------------------------
     | Scopes
