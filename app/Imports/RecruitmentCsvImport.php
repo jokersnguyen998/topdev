@@ -56,7 +56,9 @@ class RecruitmentCsvImport
             'is_published',
             'publish_start_date',
             'publish_end_date',
+            'contact_branch_id',
             'branch.name',
+            'contact_employee_id',
             'employee.name',
             'salary_type',
             'salary',
@@ -188,7 +190,7 @@ class RecruitmentCsvImport
             ->map(function ($recruit) {
                 $this->occupations->each(function ($v) use (&$recruit) {
                     if ($recruit['number'] === $v['number']) {
-                        $recruit['occupations'][] = $v['id'];
+                        $recruit['recruitment_occupations'][] = $v['id'];
                     };
                 });
                 return $recruit;
