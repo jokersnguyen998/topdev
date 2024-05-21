@@ -21,7 +21,7 @@ class BranchFactory extends Factory
     public function definition(): array
     {
         return [
-            'company_id' => Company::inRandomOrder()->first('id')->id,
+            'company_id' => Company::factory(),
             'ward_id' => $this->wards()->inRandomOrder()->first('id')->id,
             'name' => $this->faker->company . ' ' . $this->faker->companySuffix,
             'phone_number' => $this->faker->numerify('0#########'),

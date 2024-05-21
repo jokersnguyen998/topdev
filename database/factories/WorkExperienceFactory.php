@@ -18,7 +18,7 @@ class WorkExperienceFactory extends Factory
     public function definition(): array
     {
         return [
-            'worker_id' => Worker::inRandomOrder()->first('id')->id,
+            'worker_id' => Worker::factory(),
             'year' => rand(1999, 2024),
             'month' => rand(1, 12),
             'content' => $this->faker->sentence,

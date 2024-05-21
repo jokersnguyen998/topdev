@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -15,15 +15,13 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AdministrativeUnitSeeder::class,
             OccupationSeeder::class,
-            CompanySeeder::class,
-            CompanyJobIntroductionLicenseSeeder::class,
-            BranchSeeder::class,
-            BranchJobIntroductionLicenseSeeder::class,
-            EmployeeSeeder::class,
-            WorkerSeeder::class,
-            RecruitmentSeeder::class,
-            BookingSeeder::class,
-            MeetingRoomSeeder::class,
         ]);
+
+        if (config('app.env') === 'local') {
+            $this->call([
+                CompanySeeder::class,
+                WorkerSeeder::class,
+            ]);
+        }
     }
 }

@@ -47,4 +47,9 @@ class Branch extends Model
     {
         return $this->hasMany(Employee::class, 'branch_id', 'id');
     }
+
+    public function recruitments(): HasMany
+    {
+        return $this->hasMany(Recruitment::class, 'contact_branch_id', 'id');
+    }
 }

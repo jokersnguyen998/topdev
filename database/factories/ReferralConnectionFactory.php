@@ -20,8 +20,8 @@ class ReferralConnectionFactory extends Factory
     {
         $isRequestedToEnterResume = rand(0, 1);
         return [
-            'company_id' => Company::inRandomOrder()->first('id')->id,
-            'worker_id' => Worker::inRandomOrder()->first('id')->id,
+            'company_id' => Company::factory(),
+            'worker_id' => Worker::factory(),
             'published_resume_at' => rand(0, 1) ? now() : null,
             'published_experience_at' => rand(0, 1) ? now() : null,
             'requested_to_enter_resume_at' => $isRequestedToEnterResume ? now() : null,

@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Model::shouldBeStrict();
-        Model::preventAccessingMissingAttributes(false);
+        // Model::preventAccessingMissingAttributes(false);
         Gate::define('valid-license', function (Employee $user) {
             $companyJobIntroductionLicense = $user->company?->companyJobIntroductionLicense;
             return $companyJobIntroductionLicense && $companyJobIntroductionLicense->expired_date->gte(today());

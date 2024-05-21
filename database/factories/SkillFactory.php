@@ -18,7 +18,7 @@ class SkillFactory extends Factory
     public function definition(): array
     {
         return [
-            'worker_id' => Worker::inRandomOrder()->first('id')->id,
+            'worker_id' => Worker::factory(),
             'work_summary' => $this->faker->paragraph(rand(3, 5)),
             'specialty' => $this->faker->paragraph(rand(3, 5)),
             'tools' => $this->faker->paragraph(rand(3, 5)),

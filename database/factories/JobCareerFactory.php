@@ -18,7 +18,7 @@ class JobCareerFactory extends Factory
     public function definition(): array
     {
         return [
-            'skill_id' => Skill::inRandomOrder()->first('id')->id,
+            'skill_id' => Skill::factory(),
             'company_name' => $this->faker->company,
             'department_name' => $this->faker->name,
             'year' => rand(1999, 2024),

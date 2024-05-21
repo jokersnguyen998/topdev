@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\HasAdministrativeUnit;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
@@ -94,5 +95,15 @@ class Employee extends Authenticatable
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class, 'branch_id', 'id');
+    }
+
+    public function recruitments(): HasMany
+    {
+        return $this->hasMany(Recruitment::class, 'contact_employee_id', 'id');
+    }
+    
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(Booking::class, 'employee_id', 'id');
     }
 }

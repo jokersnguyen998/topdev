@@ -21,15 +21,14 @@ class EmployeeFactory extends Factory
     public function definition(): array
     {
         $contactPerson = $this->faker->firstName . ' ' . $this->faker->lastName;
-        $branch = Branch::with('company')->inRandomOrder()->first();
         return [
-            'branch_id' => $branch->id,
-            'company_id' => $branch->company_id,
+            'company_id' => fn(array $employee) => Branch::find($employee['branch_id'])->company_id,
+            'branch_id' => Branch::factory(),
             'ward_id' => $this->wards()->inRandomOrder()->first('id')->id,
             'name' => $contactPerson,
             'email' => strtolower(str_replace(' ', '-', $contactPerson)) . substr(time(), -5) . '@mailinator.com',
             'password' => bcrypt('@Abcd12345'),
-            'phone_number' => $branch->company->contact_phone_number,
+            'phone_number' => $this->faker->numerify('0#########'),
             'gender' => rand(0, 1),
             'birthday' => $this->faker->dateTimeBetween('-30 years', '-18 years'),
             'detail_address' => $this->faker->streetAddress,

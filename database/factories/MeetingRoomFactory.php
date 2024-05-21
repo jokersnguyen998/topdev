@@ -22,7 +22,7 @@ class MeetingRoomFactory extends Factory
     {
         $isOnline = rand(0, 1);
         return [
-            'company_id' => Company::inRandomOrder()->first('id')->id,
+            'company_id' => Company::factory(),
             'ward_id' => $isOnline ? null : $this->wards()->inRandomOrder()->first('id')->id,
             'name' => $this->faker->streetName,
             'is_online' => $isOnline,

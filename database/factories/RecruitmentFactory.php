@@ -21,7 +21,6 @@ class RecruitmentFactory extends Factory
      */
     public function definition(): array
     {
-        $employee = Employee::with('branch')->inRandomOrder()->first();
         $publishStartDate = $this->faker->dateTimeBetween('-2 months', 'now');
         $publishEndDate = $this->faker->dateTimeBetween('now', '+3 months');
         $isPublished = $publishStartDate <= now() && $publishEndDate >= now();
@@ -34,9 +33,9 @@ class RecruitmentFactory extends Factory
         $hasRefund = rand(0, 1);
         $title = $this->faker->jobTitle;
         return [
-            'company_id' => $employee->company_id,
-            'contact_branch_id' => $employee->branch_id,
-            'contact_employee_id' => $employee->id,
+            'company_id' => fn($recruitment) => Employee::find($recruitment['contact_employee_id'])->company_id,
+            'contact_branch_id' => fn($recruitment) => Employee::find($recruitment['contact_employee_id'])->branch_id,
+            'contact_employee_id' => Employee::factory(),
             'is_published' => $isPublished,
             'publish_start_date' => $publishStartDate->format('Y-m-d'),
             'publish_end_date' => $publishEndDate->format('Y-m-d'),

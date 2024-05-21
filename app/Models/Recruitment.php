@@ -79,9 +79,13 @@ class Recruitment extends Model
     */
     public function scopeRevised(Builder $query): Builder
     {
-        return $query
-                ->join('latest_recruitments', 'latest_recruitments.recruitment_id', '=', 'recruitments.id')
-                ->select('recruitments.*');
+        return $query->whereExists(fn (Builder $query) => $query
+            ->selectRaw(1)
+            ->from('latest_recruitments')
+            ->whereColumn('latest_recruitments.recruitment_id', '=', 'recruitments.id')
+        );
+                // ->join('latest_recruitments', 'latest_recruitments.recruitment_id', '=', 'recruitments.id')
+                // ->select('recruitments.*');
     }
 
     /*

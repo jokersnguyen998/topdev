@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Branch;
+use App\Models\Company;
 use App\Models\Employee;
 use App\Traits\HasAdministrativeUnit;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,13 +22,12 @@ class BookingFactory extends Factory
      */
     public function definition(): array
     {
-        $employee = Employee::inRandomOrder()->first();
         $isOnline = rand(0, 1);
         $startTime = $this->faker->dateTimeBetween('-2 months', '+2 weeks');
         return [
-            'company_id' => $employee->company_id,
-            'branch_id' => $employee->branch_id,
-            'employee_id' => $employee->id,
+            'company_id' => fn(array $booking) => Employee::find($booking['employee_id'])->company_id,
+            'branch_id' => fn(array $booking) => Employee::find($booking['employee_id'])->branch_id,
+            'employee_id' => Employee::factory(),
             'ward_id' => $isOnline ? null : $this->wards()->inRandomOrder()->first('id')->id,
             'name' => $this->faker->streetName,
             'start_time' => $startTime,

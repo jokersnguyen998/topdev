@@ -21,7 +21,7 @@ class CompanyJobIntroductionLicenseFactory extends Factory
     public function definition(): array
     {
         return [
-            'company_id' => $this->faker->unique()->randomElement(Company::pluck('id')->toArray()),
+            'company_id' => Company::factory(),
             'ward_id' => $this->wards()->inRandomOrder()->first('id')->id,
             'license_number_1' => $this->faker->numerify('####'),
             'license_number_2' => $this->faker->bothify('?'),

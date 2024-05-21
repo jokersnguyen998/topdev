@@ -87,6 +87,21 @@ class Company extends Model
         return $this->hasMany(Branch::class, 'company_id', 'id');
     }
 
+    public function recruitments(): HasMany
+    {
+        return $this->hasMany(Recruitment::class, 'company_id', 'id');
+    }
+
+    public function meetingRooms(): HasMany
+    {
+        return $this->hasMany(MeetingRoom::class, 'company_id', 'id');
+    }
+
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(Booking::class, 'company_id', 'id');
+    }
+
     public function employees(): HasManyThrough
     {
         return $this->hasManyThrough(

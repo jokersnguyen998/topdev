@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\AdministrativeUnit;
 use App\Traits\HasAdministrativeUnit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -23,7 +22,7 @@ class WorkerFactory extends Factory
         $contactPerson = $this->faker->firstName . ' ' . $this->faker->lastName;
         return [
             'ward_id' => $this->wards()->inRandomOrder()->first('id')->id,
-            'contact_ward_id' => AdministrativeUnit::wards()->inRandomOrder()->first('id')->id,
+            'contact_ward_id' => $this->wards()->inRandomOrder()->first('id')->id,
             'name' => $contactPerson,
             'email' => strtolower(str_replace(' ', '-', $contactPerson)) . substr(time(), -5) . '@mailinator.com',
             'password' => bcrypt('@Abcd12345'),
