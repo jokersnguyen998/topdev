@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Branch;
 use App\Models\Employee;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class EmployeeSeeder extends Seeder
@@ -11,8 +11,13 @@ class EmployeeSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
+    public function run() : void
     {
-        Employee::factory(50)->create();
+        Branch::each(fn ($branch) =>
+            Employee::factory()
+                ->recycle($branch)
+                ->sequence(['company_id' => $branch->company_id])
+                ->create()
+        );
     }
 }

@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Booking;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Employee;
 use Illuminate\Database\Seeder;
 
 class BookingSeeder extends Seeder
@@ -11,8 +11,16 @@ class BookingSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
+    public function run() : void
     {
-        Booking::factory(50)->create();
+        Employee::each(fn ($employee) =>
+            Booking::factory()
+                ->recycle($employee)
+                ->sequence([
+                    'branch_id' => $employee->branch_id,
+                    'company_id' => $employee->company_id,
+                ])
+                ->create()
+        );
     }
 }

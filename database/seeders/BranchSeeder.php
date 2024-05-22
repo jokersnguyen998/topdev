@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Branch;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Company;
 use Illuminate\Database\Seeder;
 
 class BranchSeeder extends Seeder
@@ -11,8 +11,10 @@ class BranchSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
+    public function run() : void
     {
-        Branch::factory(50)->create();
+        Company::each(fn ($company) =>
+            Branch::factory()->recycle($company)->create()
+        );
     }
 }

@@ -2,8 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Branch;
-use App\Models\Company;
 use App\Models\Employee;
 use App\Traits\HasAdministrativeUnit;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,21 +18,19 @@ class BookingFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
+    public function definition() : array
     {
-        $isOnline = rand(0, 1);
-        $startTime = $this->faker->dateTimeBetween('-2 months', '+2 weeks');
         return [
-            'company_id' => fn(array $booking) => Employee::find($booking['employee_id'])->company_id,
-            'branch_id' => fn(array $booking) => Employee::find($booking['employee_id'])->branch_id,
+            'company_id' => fn ($booking) => Employee::find($booking['employee_id'])->company_id,
+            'branch_id' => fn ($booking) => Employee::find($booking['employee_id'])->branch_id,
             'employee_id' => Employee::factory(),
-            'ward_id' => $isOnline ? null : $this->wards()->inRandomOrder()->first('id')->id,
+            'ward_id' => fn ($booking) => ! $booking['is_online'] ? $this->wards()->inRandomOrder()->first('id')->id : null,
             'name' => $this->faker->streetName,
-            'start_time' => $startTime,
-            'end_time' => date_add($startTime, date_interval_create_from_date_string("1 hour")),
-            'is_online' => $isOnline,
-            'url' => $isOnline ? $this->faker->url : null,
-            'detail_address' => $isOnline ? null : $this->faker->streetAddress,
+            'start_time' => $this->faker->dateTimeBetween('-2 months', '+2 weeks'),
+            'end_time' => fn ($booking) => date_add($booking['start_time'], date_interval_create_from_date_string("1 hour")),
+            'is_online' => rand(0, 1),
+            'url' => fn ($booking) => $booking['is_online'] ? $this->faker->url : null,
+            'detail_address' => fn ($booking) => ! $booking['is_online'] ? $this->faker->streetAddress : null,
         ];
     }
 }

@@ -18,11 +18,11 @@ class EmployeeFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
+    public function definition() : array
     {
         $contactPerson = $this->faker->firstName . ' ' . $this->faker->lastName;
         return [
-            'company_id' => fn(array $employee) => Branch::find($employee['branch_id'])->company_id,
+            'company_id' => fn ($employee) => Branch::find($employee['branch_id'])->company_id,
             'branch_id' => Branch::factory(),
             'ward_id' => $this->wards()->inRandomOrder()->first('id')->id,
             'name' => $contactPerson,

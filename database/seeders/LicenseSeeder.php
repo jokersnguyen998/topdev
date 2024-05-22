@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\License;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Worker;
 use Illuminate\Database\Seeder;
 
 class LicenseSeeder extends Seeder
@@ -11,8 +11,10 @@ class LicenseSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
+    public function run() : void
     {
-        License::factory(50)->create();
+        Worker::each(fn ($worker) =>
+            License::factory(rand(1, 3))->recycle($worker)->create()
+        );
     }
 }
